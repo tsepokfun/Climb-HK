@@ -14,13 +14,6 @@
 ├── gear.html           # 裝備介紹頁面
 ├── history.html        # 香港攀岩史頁面
 ├── image/              # 圖片資源目錄
-│   ├── map.jpg         # 香港地圖底圖
-│   ├── Climb.png       # 標題圖案
-│   ├── Hong.png / Kong.png  # 香港字樣圖片
-│   ├── AB.jpg / AC.jpg / NB.jpg / NC.jpg  # 分類卡片圖片
-│   ├── LionM.jpg       # 首頁背景圖
-│   ├── ClimbingRoute.png # 通用背景紋理
-│   └── [產品圖片].png   # 裝備產品圖片（按型號命名）
 ├── Map/                # 地圖相關資源（如有）
 └── history/            # 歷史相關資源（如有）
 ```
