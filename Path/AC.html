@@ -39,35 +39,68 @@
 <main class="main-content">
 <h1 data-lang-key="heading">🧗 人工攀岩<br><span style="font-size:1.6rem;">Artificial Climbing</span></h1>
 <div id="contentContainer"></div>
-<div class="questionnaire"><h2 data-lang-key="q_title">📋 初學者資訊問卷</h2><form id="beginnerForm"><div class="form-group"><label data-lang-key="q_name">姓名</label><input name="name" required></div><div class="form-group"><label data-lang-key="q_email">電郵</label><input type="email" name="email" required></div><div class="form-group"><label data-lang-key="q_exp">攀岩經驗</label><select name="experience"><option>無經驗</option><option>少於3個月</option><option>3-12個月</option><option>1年以上</option></select></div><div class="form-group"><label data-lang-key="q_goal">攀岩目標</label><textarea name="goal" rows="2"></textarea></div><button type="submit" data-lang-key="q_submit">提交</button></form></div>
+<div class="questionnaire"><h2 data-lang-key="q_title">📋 初學者資訊問卷</h2><form id="beginnerForm"><div class="form-group"><label data-lang-key="q_name">姓名</label><input name="name" required></div><div class="form-group"><label data-lang-key="q_email">電郵</label><input type="email" name="email" required></div><div class="form-group"><label data-lang-key="q_exp">攀岩經驗</label><select name="experience"><option>N/A</option><option>>3month</option><option>3-12month</option><option>>1year</option></select></div><div class="form-group"><label data-lang-key="q_goal">攀岩目標</label><textarea name="goal" rows="2"></textarea></div><button type="submit" data-lang-key="q_submit">提交</button></form></div>
 <div class="footer-note" style="margin-top:20px;opacity:0.7;" data-lang-key="footer">* 提交後我們會將指南發送至您的郵箱</div>
 </main>
 <script>
 (function(){
+  // 廣東話註釋：呢個 page 嘅 script 控制人工攀岩嘅內容渲染、語言切換同問卷
+
   const dict = {
-    zh:{ nav_home: '🏔️ 主頁', nav_map: '🗺️ 攀岩地圖', nav_intro: '🧗 入門分類', nav_gear: '🪢 裝備介紹', nav_history: '📜 香港攀岩史', title:'人工攀岩',heading:'🧗 人工攀岩', intro_title:'定義與特點',intro_text:'人工攀登常指在人工岩壁上進行的運動攀登，使用繩索確保，岩點多樣。與天然攀登相比，室內環境可控，適合新手學習繩索技術。', gear_title:'必要裝備',gear_items:['安全帶','攀岩鞋','頭盔','確保器','繩索','快掛'], tips_title:'初學者技巧',tips_items:['從5.6-5.8路線開始','學習正確確保技術','與夥伴互相檢查'], grade_title:'難度對照 (YDS/French)', grade_table:[['5.6','4+','新手'],['5.7','5','新手'],['5.8','5+','中階'],['5.9','6a','中階'],['5.10a','6a+','進階']],
-    q_title:'📋 初學者資訊問卷',q_name:'姓名',q_email:'電郵',q_exp:'經驗',q_goal:'目標',q_submit:'提交',footer:'* 提交後我們會將指南發送至您的郵箱'},
-    en:{ nav_home: '🏔️ Home', nav_map: '🗺️ Map', nav_intro: '🧗 Categories', nav_gear: '🪢 Gear', nav_history: '📜 History', title:'Artificial Climbing',heading:'🧗 Artificial Climbing', intro_title:'Definition',intro_text:'Artificial climbing refers to sport climbing on indoor walls with ropes. It offers a safe, controlled environment to learn rope skills.', gear_title:'Essential Gear',gear_items:['Harness','Shoes','Helmet','Belay device','Rope','Quickdraws'], tips_title:'Beginner Tips',tips_items:['Start on 5.6-5.8','Learn proper belaying','Partner checks'], grade_title:'Grade Comparison', grade_table:[['5.6','4+','Beginner'],['5.7','5','Beginner'],['5.8','5+','Intermediate'],['5.9','6a','Intermediate'],['5.10a','6a+','Advanced']],
-    q_title:'📋 Questionnaire',q_name:'Name',q_email:'Email',q_exp:'Experience',q_goal:'Goal',q_submit:'Submit',footer:'* We will send the guide to your email'}
+    zh:{ 
+      nav_home: '🏔️ 主頁', nav_map: '🗺️ 攀岩地圖', nav_intro: '🧗 入門分類', 
+      nav_gear: '🪢 裝備介紹', nav_history: '📜 香港攀岩史', title:'人工攀岩',
+      heading:'🧗 人工攀岩', intro_title:'定義與特點',
+      intro_text:'人工攀登常指在人工岩壁上進行的運動攀登，使用繩索確保，岩點多樣。與天然攀登相比，室內環境可控，適合新手學習繩索技術。', 
+      gear_title:'必要裝備', gear_items:['安全帶','攀岩鞋','頭盔','確保器','繩索','快掛'], 
+      tips_title:'初學者技巧', tips_items:['從5.6-5.8路線開始','學習正確確保技術','與夥伴互相檢查'], 
+      grade_title:'難度對照 (YDS/French)', grade_table:[['5.6','4+','新手'],['5.7','5','新手'],['5.8','5+','中階'],['5.9','6a','中階'],['5.10a','6a+','進階']],
+      q_title:'📋 初學者資訊問卷', q_name:'姓名', q_email:'電郵', q_exp:'經驗', q_goal:'目標', q_submit:'提交', footer:'* 提交後我們會將指南發送至您的郵箱'
+    },
+    en:{ 
+      nav_home: '🏔️ Home', nav_map: '🗺️ Map', nav_intro: '🧗 Categories', 
+      nav_gear: '🪢 Gear', nav_history: '📜 History', title:'Artificial Climbing',
+      heading:'🧗 Artificial Climbing', intro_title:'Definition',
+      intro_text:'Artificial climbing refers to sport climbing on indoor walls with ropes. It offers a safe, controlled environment to learn rope skills.', 
+      gear_title:'Essential Gear', gear_items:['Harness','Shoes','Helmet','Belay device','Rope','Quickdraws'], 
+      tips_title:'Beginner Tips', tips_items:['Start on 5.6-5.8','Learn proper belaying','Partner checks'], 
+      grade_title:'Grade Comparison', grade_table:[['5.6','4+','Beginner'],['5.7','5','Beginner'],['5.8','5+','Intermediate'],['5.9','6a','Intermediate'],['5.10a','6a+','Advanced']],
+      q_title:'📋 Questionnaire', q_name:'Name', q_email:'Email', q_exp:'Experience', q_goal:'Goal', q_submit:'Submit', footer:'* We will send the guide to your email'
+    }
   };
+  
   let lang = localStorage.getItem('climb_lang') || 'zh'; 
   const cont = document.getElementById('contentContainer');
   
+  // render 內容：用 dict 砌 HTML
   function render(l){
-    const d=dict[l]; let h=`<h2>${d.intro_title}</h2><p>${d.intro_text}</p><h2>${d.gear_title}</h2><ul>${d.gear_items.map(i=>'<li>'+i+'</li>').join('')}</ul><h2>${d.tips_title}</h2><ul>${d.tips_items.map(i=>'<li>'+i+'</li>').join('')}</ul><h2>${d.grade_title}</h2><table><tr><th>YDS</th><th>🇫🇷</th><th>描述</th></tr>`;
-    d.grade_table.forEach(r=>{ h+=`<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`; }); h+='</table>'; cont.innerHTML=h;
+    const d=dict[l]; 
+    let h=`<h2>${d.intro_title}</h2><p>${d.intro_text}</p><h2>${d.gear_title}</h2><ul>${d.gear_items.map(i=>'<li>'+i+'</li>').join('')}</ul><h2>${d.tips_title}</h2><ul>${d.tips_items.map(i=>'<li>'+i+'</li>').join('')}</ul><h2>${d.grade_title}</h2><table><tr><th>YDS</th><th>🇫🇷</th><th>描述</th></tr>`;
+    d.grade_table.forEach(r=>{ h+=`<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`; }); 
+    h+='</table>'; 
+    cont.innerHTML=h;
+    // update 所有 data-lang-key 元素
     document.querySelectorAll('[data-lang-key]').forEach(el=>{ const k=el.dataset.langKey; if(d[k]) el.textContent=d[k]; });
   }
   
   render(lang);
   document.getElementById('langToggle').textContent = lang === 'zh' ? '中 / EN' : 'EN / 中';
-  document.getElementById('langToggle').onclick=()=>{ lang=lang==='zh'?'en':'zh'; localStorage.setItem('climb_lang', lang); render(lang); document.getElementById('langToggle').textContent=lang==='zh'?'中 / EN':'EN / 中'; };
   
+  // 語言切換
+  document.getElementById('langToggle').onclick=()=>{ 
+    lang=lang==='zh'?'en':'zh'; 
+    localStorage.setItem('climb_lang', lang); 
+    render(lang); 
+    document.getElementById('langToggle').textContent=lang==='zh'?'中 / EN':'EN / 中'; 
+  };
+  
+  // Menu dropdown
   const menuToggle = document.getElementById('menuToggle');
   const navDropdown = document.getElementById('navDropdown');
   menuToggle.addEventListener('click', (e) => { e.stopPropagation(); navDropdown.classList.toggle('active'); });
   document.addEventListener('click', (e) => { if (!menuToggle.contains(e.target) && !navDropdown.contains(e.target)) navDropdown.classList.remove('active'); });
 
+  // 問卷 submit
   document.getElementById('beginnerForm').onsubmit=e=>{ e.preventDefault(); alert(lang==='zh'?'感謝提交！':'Thanks!'); };
 })();
 </script>

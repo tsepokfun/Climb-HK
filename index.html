@@ -249,6 +249,12 @@
   (function(){
     "use strict";
 
+    // ============================================================
+    // 廣東話註釋：呢個係 main script，負責語言切換、scroll effect、
+    // canvas 繪圖、同埋各個互動區域嘅 click handler
+    // ============================================================
+
+    // ---------- 1. 多語言 dictionary (中/英) ----------
     const langDict = {
       zh: {
         site_title: '香港攀岩', nav_home: '🏔️ 主頁', nav_map: '🗺️ 攀岩地圖', nav_intro: '🧗 入門分類', nav_gear: '🪢 裝備介紹', nav_history: '📜 香港攀岩史',
@@ -268,13 +274,14 @@
       }
     };
 
-    let currentLang = 'zh';
+    let currentLang = 'zh';  // 當前語言，預設中文
 
+    // DOM elements 嘅 reference
     const gearCanvas = document.getElementById('gearCanvas');
     const gearCtx = gearCanvas.getContext('2d');
     gearCanvas.width = 900;
     gearCanvas.height = 550;
-    const hitRegions =[];
+    const hitRegions = [];     // 用嚟儲 canvas 上面嘅 clickable area (rect + url)
 
     const scrollHint = document.getElementById('scrollHint');
     const climberIcon = document.getElementById('climberIcon');
@@ -282,29 +289,37 @@
     const menuToggle = document.getElementById('menuToggle');
     const navDropdown = document.getElementById('navDropdown');
 
+    // ---------- 2. 繪畫 gear canvas (裝備圖 + 互動熱點) ----------
+    // 廣東話註釋：呢個 function 會畫晒所有裝備圖案，同埋記錄每個 clickable region 嘅座標同對應嘅 URL
     function drawGearScene() {
       gearCtx.clearRect(0, 0, gearCanvas.width, gearCanvas.height);
-      hitRegions.length = 0;
+      hitRegions.length = 0;   // reset 熱點陣列
 
+      // 畫繩索 (rope)
       gearCtx.shadowColor = '#1a1a1a'; gearCtx.shadowBlur = 10;
       gearCtx.fillStyle = '#b5875a'; gearCtx.fillRect(480, 20, 30, 230);
       gearCtx.fillStyle = '#9c7a4d'; for (let i=25; i<250; i+=12) { gearCtx.fillRect(480, i, 30, 4); }
       gearCtx.fillStyle = '#dbb07c'; gearCtx.globalAlpha = 0.5; gearCtx.fillRect(485, 20, 8, 230);
       gearCtx.globalAlpha = 1.0; gearCtx.shadowBlur = 0;
 
+      // 畫頭盔 (helmet)
       gearCtx.fillStyle = '#f7d9aa'; gearCtx.beginPath(); gearCtx.arc(400, 75, 28, 0, 2*Math.PI); gearCtx.fill();
       gearCtx.strokeStyle = '#6b4f2c'; gearCtx.lineWidth = 2; gearCtx.stroke();
       
+      // 畫安全帶 (harness) 嘅一部份
       gearCtx.fillStyle = '#4f7a9e';
       gearCtx.fillRect(365, 105, 70, 90); gearCtx.fillRect(315, 115, 45, 18);
       gearCtx.fillRect(440, 115, 45, 18); gearCtx.fillRect(355, 200, 22, 65); gearCtx.fillRect(423, 200, 22, 65);
       
+      // 畫確保器 (belay device) 位置
       gearCtx.fillStyle = '#d63e3e'; gearCtx.beginPath(); gearCtx.arc(400, 65, 32, Math.PI, 2*Math.PI); gearCtx.fill();
       
+      // 畫手套 (gloves)
       gearCtx.fillStyle = '#b05e2e';
       gearCtx.beginPath(); gearCtx.moveTo(345, 265); gearCtx.lineTo(375, 265); gearCtx.lineTo(382, 285); gearCtx.lineTo(338, 285); gearCtx.closePath(); gearCtx.fill();
       gearCtx.beginPath(); gearCtx.moveTo(415, 265); gearCtx.lineTo(445, 265); gearCtx.lineTo(452, 285); gearCtx.lineTo(408, 285); gearCtx.closePath(); gearCtx.fill();
 
+      // 畫攀石鞋 (shoes)
       gearCtx.fillStyle = '#2e5c6b';
       gearCtx.fillRect(345, 180, 110, 12); gearCtx.fillRect(345, 200, 18, 40); gearCtx.fillRect(437, 200, 18, 40);
       gearCtx.fillRect(385, 180, 10, 55); gearCtx.fillRect(405, 180, 10, 55);
@@ -318,9 +333,7 @@
       
       const isEn = currentLang === 'en';
 
-      // ==========================================
-      // 【修改】將 url 指向 `gear/gear.html?type=...`
-      // ==========================================
+      // 裝備 labels 同埋佢哋嘅連結 (指向 gear.html 加 query parameter)
       const labels =[
         { zh: '頭盔', en: 'Helmet', x: 160, y: 90, cx: 365, cy: 65, url: 'gear/gear.html?type=helmet' },
         { zh: '攀石鞋', en: 'Shoes', x: 120, y: 270, cx: 350, cy: 270, url: 'gear/gear.html?type=shoes' },
@@ -333,6 +346,7 @@
       gearCtx.font = 'bold 18px system-ui, sans-serif'; gearCtx.fillStyle = '#f5f0dc';
       gearCtx.strokeStyle = '#cdc6a5'; gearCtx.lineWidth = 2;
       
+      // 畫每個 label 嘅指引線同文字方塊，同時 push 入 hitRegions
       labels.forEach(item => {
         gearCtx.beginPath(); gearCtx.moveTo(item.cx, item.cy); gearCtx.lineTo(item.x + 50, item.y - 5); gearCtx.stroke();
         const name = isEn ? item.en : item.zh;
@@ -343,6 +357,7 @@
         hitRegions.push({ rect:[textRect.x, textRect.y, textRect.w, textRect.h], url: item.url });
       });
       
+      // 再加多幾個大範圍嘅 hit area，等用戶點落圖案附近都 redirect 到正確頁面
       hitRegions.push({ rect:[360,35,80,40], url:'gear/gear.html?type=helmet' });
       hitRegions.push({ rect:[335,255,120,35], url:'gear/gear.html?type=shoes' });
       hitRegions.push({ rect:[340,175,130,70], url:'gear/gear.html?type=harness' });
@@ -350,15 +365,20 @@
       hitRegions.push({ rect:[280,105,80,40], url:'gear/gear.html?type=gloves' });
     }
 
+    // ---------- 3. 套用語言 (apply language) ----------
+    // 廣東話註釋：更新所有 [data-lang-key] 嘅文字內容，同埋重新 draw canvas (因為 label 文字會轉)
     function applyLanguage(lang) {
       currentLang = lang;
       document.querySelectorAll('[data-lang-key]').forEach(el => {
         const key = el.getAttribute('data-lang-key');
         if (langDict[lang] && langDict[lang][key]) { el.textContent = langDict[lang][key]; }
       });
-      drawGearScene();
+      drawGearScene();  // 重新繪畫 canvas，令 label 文字轉成新語言
     }
 
+    // ---------- 4. Scroll 事件處理 (update 繩索小人位置 + fade effect + canvas scale) ----------
+    // 廣東話註釋：每次 scroll 都會 call 呢個 function，更新繩索上嘅🧗小人位置、
+    // 控制 scroll hint 嘅顯示/隱藏、fade section 嘅 opacity、同埋 gear section 嘅 canvas 微 scale
     function updateProgressAndEffects() {
       const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
       const docHeight = document.documentElement.scrollHeight - window.innerHeight;
@@ -366,11 +386,13 @@
       percent = Math.min(1, Math.max(0, percent));
       if (climberIcon) climberIcon.style.top = (percent * 100) + '%';
       
+      // 當 scroll 超過 80px 就 fade out 個 scroll hint
       if (scrollHint) {
         scrollHint.style.opacity = scrollTop > 80 ? '0' : '0.8';
         scrollHint.style.pointerEvents = scrollTop > 80 ? 'none' : 'auto';
       }
 
+      // fade-section 區塊嘅 fade in/out effect
       document.querySelectorAll('.fade-section').forEach(section => {
         const rect = section.getBoundingClientRect();
         const wh = window.innerHeight;
@@ -381,6 +403,7 @@
         section.style.opacity = opacity;
       });
 
+      // gear section 嘅 canvas 根據距離 viewport 中間嘅位置做輕微 scale 同 shift
       const gearSection = document.getElementById('sectionGear');
       if (gearCanvas && gearSection) {
         const rect = gearSection.getBoundingClientRect();
@@ -394,11 +417,13 @@
       }
     }
 
+    // ---------- 5. 初始化語言同埋 event listeners ----------
     const savedLang = localStorage.getItem('climb_lang') || 'zh';
     langToggle.textContent = savedLang === 'zh' ? '中 / EN' : 'EN / 中';
     applyLanguage(savedLang); 
     updateProgressAndEffects();
 
+    // 語言切換 button click handler
     langToggle.addEventListener('click', () => {
       const newLang = currentLang === 'zh' ? 'en' : 'zh';
       localStorage.setItem('climb_lang', newLang);
@@ -406,6 +431,7 @@
       applyLanguage(newLang);
     });
 
+    // Menu dropdown 嘅開關邏輯
     menuToggle.addEventListener('click', (e) => {
       e.stopPropagation(); navDropdown.classList.toggle('active');
     });
@@ -416,8 +442,10 @@
       item.addEventListener('click', () => { navDropdown.classList.remove('active'); });
     });
 
+    // 地圖 click -> 跳去 Map/map.html
     document.getElementById('mapClickArea').addEventListener('click', () => { window.location.href = 'Map/map.html'; });
 
+    // 四個入門分類卡片嘅 click handler (用 data-goto attribute)
     document.querySelectorAll('.intro-card').forEach(card => {
       card.addEventListener('click', (e) => {
         const goto = card.dataset.goto;
@@ -425,6 +453,8 @@
       });
     });
 
+    // Canvas 上面嘅 click detection: 將 mouse coordinate 轉換成 canvas 嘅 coordinate，
+    // 然後 check hitRegions 有冇 match，有就 redirect
     gearCanvas.addEventListener('click', (e) => {
       const rect = gearCanvas.getBoundingClientRect();
       const scaleX = gearCanvas.width / rect.width;
@@ -440,8 +470,11 @@
       }
     });
 
+    // 歷史 section 成個區域 click 就去 history/history.html
     document.getElementById('sectionHistory').addEventListener('click', ()=> window.location.href='history/history.html');
     document.getElementById('mainFooter').addEventListener('click', (e)=> e.stopPropagation());
+    
+    // 監聽 scroll 同 resize 事件
     window.addEventListener('scroll', updateProgressAndEffects);
     window.addEventListener('resize', ()=> { drawGearScene(); updateProgressAndEffects(); });
 

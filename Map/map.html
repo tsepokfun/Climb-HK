@@ -304,6 +304,12 @@
     </div>
 
     <script>
+        // ============================================================
+        // 廣東話註釋：地圖頁面 main script
+        // 負責顯示攀岩點 pins、sidebar 卡片、過濾功能、語言切換
+        // ============================================================
+
+        // ---------- 1. 多語言 dictionary ----------
         const langDict = {
             zh: {
                 site_title: '香港攀岩',
@@ -321,40 +327,24 @@
             }
         };
 
-        let currentLang = 'zh';
+        let currentLang = 'zh';  // 當前語言
 
+        // ---------- 2. Menu dropdown 邏輯 ----------
         const menuToggle = document.getElementById('menuToggle');
         const navDropdown = document.getElementById('navDropdown');
         menuToggle.addEventListener('click', (e) => {
-            e.stopPropagation(); navDropdown.classList.toggle('active');
+            e.stopPropagation(); 
+            navDropdown.classList.toggle('active');  // toggle 開關
         });
         document.addEventListener('click', (e) => {
-            if (!menuToggle.contains(e.target) && !navDropdown.contains(e.target)) navDropdown.classList.remove('active');
+            if (!menuToggle.contains(e.target) && !navDropdown.contains(e.target)) 
+                navDropdown.classList.remove('active');  // 禁其他地方就收埋
         });
 
-        function applyLanguage(lang) {
-            currentLang = lang;
-            document.querySelectorAll('[data-lang-key]').forEach(el => {
-                const key = el.getAttribute('data-lang-key');
-                if (langDict[lang] && langDict[lang][key]) {
-                    if(el.tagName === 'INPUT') el.placeholder = langDict[lang][key];
-                    else el.textContent = langDict[lang][key];
-                }
-            });
-            renderSidebar(); 
-            applyFilters();  
-            popup.classList.remove('show'); 
-        }
-
-        document.getElementById('langToggle').addEventListener('click', (e) => {
-            const newLang = currentLang === 'zh' ? 'en' : 'zh';
-            localStorage.setItem('climb_lang', newLang);
-            applyLanguage(newLang);
-            e.target.textContent = newLang === 'zh' ? '中 / EN' : 'EN / 中';
-        });
-
+        // ---------- 3. 地圖邊界 (用嚟轉換 lat/lng 做百分比位置) ----------
         const mapBounds = { north: 22.58, south: 22.13, west: 113.82, east: 114.46 };
 
+        // ---------- 4. 分類資訊 (顏色 + 中英文名稱) ----------
         const categoryInfo = {
             'NB': { color: '#3a5a3a', zh: '天然抱石', en: 'Outdoor Bouldering' },
             'AB': { color: '#2d5a7b', zh: '人工抱石', en: 'Gym Bouldering' },
@@ -362,6 +352,7 @@
             'AC': { color: '#5a3a7b', zh: '人工攀登', en: 'Gym Climbing' }
         };
 
+        // ---------- 5. 攀岩點資料庫 ----------
         const spots = [
             { id: 1, typeCode: 'NB', lat: 22.213, lng: 114.200, diff: "VB - V12", name: { zh: "舂坎角", en: "Chung Hom Kok" }, desc: { zh: "約97條路線，花崗岩。路況包括手足並用的攀爬石壁。", en: "Around 97 routes on granite. Includes scrambling sections." }, trans: { zh: "中環乘6X等巴士至舂坎角道", en: "Bus 6X from Central to Chung Hom Kok Rd" }},
             { id: 2, typeCode: 'NB', lat: 22.228, lng: 114.251, diff: "VB - V12+", name: { zh: "石澳 - 抱石區", en: "Shek O - Bouldering" }, desc: { zh: "約143條路線。大頭洲「九宮格」是馳名攀石地。", en: "143 routes. Tai Tau Chau is famous for its intricate rock textures." }, trans: { zh: "筲箕灣乘9號巴士", en: "Bus 9 from Shau Kei Wan" }},
@@ -380,6 +371,9 @@
             { id: 15, typeCode: 'AC', lat: 22.320, lng: 114.160, diff: "Top Rope", name: { zh: "大角咀體育館", en: "Tai Kok Tsui Sports Centre" }, desc: { zh: "共設10條路線(高9米)。需持二級運動攀登證書。", en: "10 routes (9m). Level 2 climbing cert required." }, trans: { zh: "大角咀福全街", en: "Fuk Tsun Street, Tai Kok Tsui" }}
         ];
 
+        // ---------- 6. 將經緯度轉換成 map-inner 嘅百分比位置 ----------
+        // 廣東話註釋：map-inner 嘅寬度 = 100%，高度 = 100%
+        // 用 linear interpolation 將 lat/lng  map 去 0-100% 嘅範圍
         function convertLatLngToXY(lat, lng) {
             const x = ((lng - mapBounds.west) / (mapBounds.east - mapBounds.west)) * 100;
             const y = ((mapBounds.north - lat) / (mapBounds.north - mapBounds.south)) * 100;
@@ -391,11 +385,12 @@
         const popup = document.getElementById('map-popup');
         const searchInput = document.getElementById('searchInput');
 
-        let currentFilter = 'all'; 
-        let currentSearchTerm = '';
-        const pinElements = {};
-        const cardElements = {};
+        let currentFilter = 'all';      // 當前過濾類型 ('all', 'NB', 'AB', 'NC', 'AC')
+        let currentSearchTerm = '';     // 當前 search input 嘅內容
+        const pinElements = {};          // 儲存每個 spot id 對應嘅 pin DOM element
+        const cardElements = {};         // 儲存每個 spot id 對應嘅 card DOM element
 
+        // ---------- 7. 初始化地圖上嘅 pins (波波) ----------
         function initMapPins() {
             spots.forEach(spot => {
                 const pos = convertLatLngToXY(spot.lat, spot.lng);
@@ -411,6 +406,7 @@
             });
         }
 
+        // ---------- 8. 渲染右邊 sidebar 嘅卡片 ----------
         function renderSidebar() {
             sidebar.innerHTML = '';
             spots.forEach(spot => {
@@ -434,16 +430,20 @@
                 sidebar.appendChild(card);
                 cardElements[spot.id] = card;
             });
-            applyFilters(); 
+            applyFilters();  // apply filter 令顯示同 pins 一致
         }
 
+        // ---------- 9. 處理點擊 spot (pin 或卡片) ----------
+        // 廣東話註釋：highlight 對應 pin、顯示 popup、scroll map 同 sidebar
         function handleSpotSelection(id) {
             const spot = spots.find(s => s.id === id);
             if (!spot) return;
 
+            // Remove highlight from all pins
             Object.values(pinElements).forEach(p => p.classList.remove('highlight'));
             pinElements[id].classList.add('highlight');
 
+            // Set popup position and content
             const pos = convertLatLngToXY(spot.lat, spot.lng);
             popup.style.left = `${pos.x}%`;
             popup.style.top = `${pos.y}%`;
@@ -452,19 +452,27 @@
             document.getElementById('popup-title').innerText = spot.name[currentLang];
             document.getElementById('popup-type').innerText = categoryInfo[spot.typeCode][currentLang];
             document.getElementById('popup-diff').innerText = spot.diff;
-            document.getElementById('popup-desc').innerText = spot.desc[currentLang];
+            document.getElementById('popup-desc').innerHTML = `<strong>${langDict[currentLang].p_desc}</strong> ${spot.desc[currentLang]}<br><strong>${langDict[currentLang].p_trans}</strong> ${spot.trans[currentLang]}`;
             
             popup.classList.add('show');
 
+            // Scroll map area to center the pin
             const mapArea = document.getElementById('map-area');
             const pinRect = pinElements[id].getBoundingClientRect();
             const areaRect = mapArea.getBoundingClientRect();
-            mapArea.scrollBy({ left: pinRect.left - areaRect.left - (areaRect.width/2), top: pinRect.top - areaRect.top - (areaRect.height/2), behavior: 'smooth' });
+            mapArea.scrollBy({ 
+                left: pinRect.left - areaRect.left - (areaRect.width/2), 
+                top: pinRect.top - areaRect.top - (areaRect.height/2), 
+                behavior: 'smooth' 
+            });
+            
+            // Scroll sidebar to bring the card into view
             cardElements[id].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
 
+        // ---------- 10. 過濾功能 (filter by type + search term) ----------
         function applyFilters() {
-            popup.classList.remove('show'); 
+            popup.classList.remove('show');  // 關閉 popup
             spots.forEach(spot => {
                 const matchCategory = (currentFilter === 'all' || spot.typeCode === currentFilter);
                 const searchData = `${spot.name.zh} ${spot.name.en} ${spot.diff} ${spot.desc.zh} ${spot.desc.en} ${spot.trans.zh} ${spot.trans.en}`.toLowerCase();
@@ -476,6 +484,7 @@
             });
         }
 
+        // 全域 filter function (俾 HTML button 用)
         window.filterSpots = function(type, event) {
             currentFilter = type;
             document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
@@ -483,11 +492,13 @@
             applyFilters();
         };
 
+        // Search input event listener
         searchInput.addEventListener('input', function(e) {
             currentSearchTerm = e.target.value.toLowerCase().trim(); 
             applyFilters();
         });
 
+        // 點擊地圖空白地方關閉 popup
         mapInner.addEventListener('click', function(e) {
             if (e.target === mapInner) {
                 popup.classList.remove('show');
@@ -495,11 +506,34 @@
             }
         });
 
+        // ---------- 11. 語言切換 ----------
+        function applyLanguage(lang) {
+            currentLang = lang;
+            document.querySelectorAll('[data-lang-key]').forEach(el => {
+                const key = el.getAttribute('data-lang-key');
+                if (langDict[lang] && langDict[lang][key]) {
+                    if(el.tagName === 'INPUT') el.placeholder = langDict[lang][key];
+                    else el.textContent = langDict[lang][key];
+                }
+            });
+            renderSidebar();  // 重新 render sidebar 令卡片文字轉語言
+            applyFilters();   // 重新 apply filter 保持顯示狀態
+            popup.classList.remove('show'); 
+        }
+
+        // ---------- 12. 初始化 ----------
         initMapPins();
         const savedLang = localStorage.getItem('climb_lang') || 'zh';
         document.getElementById('langToggle').textContent = savedLang === 'zh' ? '中 / EN' : 'EN / 中';
         applyLanguage(savedLang);
 
+        // 語言切換 button click handler
+        document.getElementById('langToggle').addEventListener('click', (e) => {
+            const newLang = currentLang === 'zh' ? 'en' : 'zh';
+            localStorage.setItem('climb_lang', newLang);
+            applyLanguage(newLang);
+            e.target.textContent = newLang === 'zh' ? '中 / EN' : 'EN / 中';
+        });
     </script>
 </body>
 </html>

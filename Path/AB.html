@@ -61,7 +61,7 @@
     <form id="beginnerForm">
       <div class="form-group"><label data-lang-key="q_name">姓名 / Name</label><input type="text" name="name" required></div>
       <div class="form-group"><label data-lang-key="q_email">電郵 / Email</label><input type="email" name="email" required></div>
-      <div class="form-group"><label data-lang-key="q_exp">攀岩經驗</label><select name="experience"><option value="none">無經驗</option><option value="beginner">少於3個月</option><option value="some">3-12個月</option><option value="regular">1年以上</option></select></div>
+      <div class="form-group"><label data-lang-key="q_exp">攀岩經驗</label><select name="experience"><option value="none">N/A</option><option value="beginner">>3month</option><option value="some">3-12month</option><option value="regular">>1year</option></select></div>
       <div class="form-group"><label data-lang-key="q_goal">攀岩目標</label><textarea name="goal" rows="2"></textarea></div>
       <button type="submit" data-lang-key="q_submit">提交</button>
     </form>
@@ -70,6 +70,12 @@
 </main>
 <script>
   (function(){
+    // ============================================================
+    // 廣東話註釋：呢個 page 嘅 script 負責多語言內容渲染、問卷提交、
+    // 同埋 menu dropdown 嘅控制
+    // ============================================================
+
+    // ---------- 1. 多語言 dictionary ----------
     const langDict = {
       zh: {
         nav_home: '🏔️ 主頁', nav_map: '🗺️ 攀岩地圖', nav_intro: '🧗 入門分類', nav_gear: '🪢 裝備介紹', nav_history: '📜 香港攀岩史',
@@ -94,21 +100,25 @@
     let currentLang = localStorage.getItem('climb_lang') || 'zh';
     const container = document.getElementById('contentContainer');
     
+    // ---------- 2. 渲染內容 (根據語言動態生成 HTML) ----------
+    // 廣東話註釋：用 dictionary 嘅內容砌出定義、裝備、技巧、難度表嘅 HTML
     function render(lang){
       const d = langDict[lang];
       let html = `<h2>${d.intro_title}</h2><p>${d.intro_text}</p>`;
       html += `<h2>${d.gear_title}</h2><ul>${d.gear_items.map(i=>`<li>${i}</li>`).join('')}</ul>`;
       html += `<h2>${d.tips_title}</h2><ul>${d.tips_items.map(i=>`<li>${i}</li>`).join('')}</ul>`;
-      html += `<h2>${d.grade_title}</h2><table><tr><th>V</th><th>🇫🇷</th><th></th></tr>`;
+      html += `<h2>${d.grade_title}</h2><tr><tr><th>V</th><th>🇫🇷</th><th></th></tr>`;
       d.grade_table.forEach(r=>{ html += `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`; });
       html += `</table>`;
       container.innerHTML = html;
+      // 更新所有 data-lang-key 嘅元素
       document.querySelectorAll('[data-lang-key]').forEach(el=>{ const k=el.dataset.langKey; if(d[k]) el.textContent = d[k]; });
     }
     
     render(currentLang);
     document.getElementById('langToggle').textContent = currentLang === 'zh' ? '中 / EN' : 'EN / 中';
 
+    // ---------- 3. 語言切換 ----------
     document.getElementById('langToggle').addEventListener('click',()=>{
       currentLang = currentLang==='zh'?'en':'zh';
       localStorage.setItem('climb_lang', currentLang);
@@ -116,11 +126,13 @@
       document.getElementById('langToggle').textContent = currentLang==='zh'?'中 / EN':'EN / 中';
     });
 
+    // ---------- 4. Menu dropdown 邏輯 ----------
     const menuToggle = document.getElementById('menuToggle');
     const navDropdown = document.getElementById('navDropdown');
     menuToggle.addEventListener('click', (e) => { e.stopPropagation(); navDropdown.classList.toggle('active'); });
     document.addEventListener('click', (e) => { if (!menuToggle.contains(e.target) && !navDropdown.contains(e.target)) navDropdown.classList.remove('active'); });
 
+    // ---------- 5. 問卷 submit (demo 版，只係彈 alert) ----------
     document.getElementById('beginnerForm').addEventListener('submit',(e)=>{ e.preventDefault(); alert(currentLang==='zh'?'感謝提交！我們會盡快回覆。':'Thanks! We will reply soon.'); });
   })();
 </script>
