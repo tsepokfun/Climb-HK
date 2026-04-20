@@ -5,262 +5,108 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>香港攀岩歷史 · 攀·香港</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background-color: black; color: white; font-family: system-ui, -apple-system, 'Helvetica Neue', 'Noto Sans HK', sans-serif; min-height: 100vh; display: flex; flex-direction: column; }
+    
+    body::before {
+      content: ""; position: fixed; inset: 0;
+      background-image: url('../image/ClimbingRoute.png');
+      background-size: cover; background-position: center;
+      opacity: 0.8; z-index: 0; pointer-events: none;
     }
 
-    body {
-      background-color: black;
-      color: white;
-      font-family: system-ui, -apple-system, 'Helvetica Neue', 'Noto Sans HK', sans-serif;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-
-    /* 繼承主站頂欄 */
+    /* 頂欄 */
     .top-bar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 64px;
-      background-color: black;
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 24px;
-      z-index: 100;
-      border-bottom: 1px solid #333;
+      position: fixed; top: 0; left: 0; width: 100%; height: 64px;
+      background-color: black; color: white; display: flex;
+      align-items: center; justify-content: space-between;
+      padding: 0 24px; z-index: 200; border-bottom: 1px solid #333;
     }
-
-    .menu-area {
-      display: flex;
-      align-items: center;
-      gap: 16px;
+    .menu-area { position: relative; display: flex; align-items: center; gap: 16px; }
+    .menu-dots { font-size: 28px; line-height: 1; cursor: pointer; letter-spacing: 2px; user-select: none; padding: 8px 0; color: white; }
+    .nav-dropdown {
+      position: absolute; top: 50px; left: -10px; background: rgba(20, 20, 20, 0.95); backdrop-filter: blur(8px);
+      border: 1px solid #555; border-radius: 12px; padding: 12px 0; min-width: 180px; display: none; flex-direction: column;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.6); z-index: 220;
     }
-
-    .back-link {
-      color: #ccc;
-      text-decoration: none;
-      font-size: 1.2rem;
-      padding: 6px 12px;
-      border-radius: 30px;
-      background: #222;
-      transition: 0.2s;
-      border: 1px solid #444;
-    }
-
-    .back-link:hover {
-      background: #3a5a3a;
-      color: white;
-    }
-
-    .site-title {
-      font-weight: 600;
-      font-size: 1.4rem;
-      letter-spacing: 2px;
-    }
-
+    .nav-dropdown.active { display: flex; }
+    .nav-item { padding: 12px 24px; color: #f0f0e0; font-size: 1.1rem; text-decoration: none; cursor: pointer; transition: background 0.2s; white-space: nowrap; }
+    .nav-item:hover { background: #3a5a3a; color: white; }
+    .site-title { font-weight: 600; font-size: 1.4rem; letter-spacing: 2px; }
     .lang-switch {
-      background: #2a2a2a;
-      color: #ddd;
-      border: 1px solid #777;
-      padding: 6px 14px;
-      border-radius: 30px;
-      font-size: 1rem;
-      font-weight: bold;
-      cursor: pointer;
-      transition: 0.2s;
-      user-select: none;
+      background: #2a2a2a; color: #ddd; border: 1px solid #777;
+      padding: 6px 14px; border-radius: 30px; font-size: 1rem;
+      font-weight: bold; cursor: pointer; transition: 0.2s; user-select: none;
     }
-
-    .lang-switch:hover {
-      background: #4a6a4a;
-      color: white;
-      border-color: #aaa;
-    }
+    .lang-switch:hover { background: #4a6a4a; color: white; border-color: #aaa; }
 
     /* 主要內容區域 */
     .main-content {
-      margin-top: 64px;
-      padding: 40px 24px 60px;
-      max-width: 1200px;
-      margin-left: auto;
-      margin-right: auto;
-      width: 100%;
-      background: rgba(0,0,0,0.6);
-      backdrop-filter: blur(2px);
-      min-height: calc(100vh - 64px);
-      position: relative;
-      z-index: 1;
-    }
-
-    /* 背景圖層 (模擬主站氛圍) */
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      background-image: url('../image/ClimbingRoute.png');
-      background-size: cover;
-      background-position: center;
-      opacity: 0.2;
-      z-index: 0;
-      pointer-events: none;
+      margin-top: 64px; padding: 40px 24px 60px; max-width: 1200px;
+      margin-left: auto; margin-right: auto; width: 100%;
+      background: rgba(0,0,0,0.6); backdrop-filter: blur(3px);
+      min-height: calc(100vh - 64px); position: relative; z-index: 1;
     }
 
     h1 {
-      font-size: 3.2rem;
-      margin-bottom: 16px;
-      font-weight: 600;
-      letter-spacing: 4px;
-      border-left: 6px solid #b98c5f;
-      padding-left: 24px;
-      text-shadow: 2px 2px 8px black;
+      font-size: 3.2rem; margin-bottom: 16px; font-weight: 600; letter-spacing: 4px;
+      border-left: 6px solid #b98c5f; padding-left: 24px; text-shadow: 2px 2px 8px black;
     }
 
-    .subhead {
-      font-size: 1.2rem;
-      margin-bottom: 40px;
-      opacity: 0.9;
-      color: #ccc;
-    }
+    .subhead { font-size: 1.2rem; margin-bottom: 40px; opacity: 0.9; color: #ccc; }
 
-    /* 時間線容器 */
-    .timeline {
-      position: relative;
-      margin: 40px 0;
-    }
-
-    /* 年代標題 */
-    .era {
-      margin-top: 48px;
-      margin-bottom: 16px;
-      font-size: 2.4rem;
-      font-weight: 700;
-      color: #dbb07c;
-      border-bottom: 2px solid #5a6a5a;
-      padding-bottom: 8px;
-    }
-
-    .era:first-of-type {
-      margin-top: 0;
-    }
-
-    /* 事件卡片 */
+    /* 時間線 */
+    .timeline { position: relative; margin: 40px 0; }
+    .era { margin-top: 48px; margin-bottom: 16px; font-size: 2.4rem; font-weight: 700; color: #dbb07c; border-bottom: 2px solid #5a6a5a; padding-bottom: 8px; }
+    .era:first-of-type { margin-top: 0; }
     .event-card {
-      background: rgba(20, 25, 20, 0.8);
-      backdrop-filter: blur(4px);
-      border-left: 6px solid #b98c5f;
-      margin-bottom: 20px;
-      padding: 20px 28px;
-      border-radius: 0 16px 16px 0;
-      box-shadow: 0 6px 14px rgba(0,0,0,0.5);
-      transition: transform 0.2s;
+      background: rgba(20, 25, 20, 0.8); backdrop-filter: blur(4px);
+      border-left: 6px solid #b98c5f; margin-bottom: 20px; padding: 20px 28px;
+      border-radius: 0 16px 16px 0; box-shadow: 0 6px 14px rgba(0,0,0,0.5); transition: transform 0.2s;
     }
-
-    .event-card:hover {
-      transform: translateX(6px);
-      background: rgba(40, 50, 40, 0.9);
-    }
-
-    .event-year {
-      font-size: 1.8rem;
-      font-weight: 700;
-      color: #e0c090;
-      margin-bottom: 8px;
-      display: flex;
-      align-items: baseline;
-      gap: 12px;
-    }
-
-    .event-year small {
-      font-size: 1rem;
-      font-weight: 400;
-      color: #aaa;
-    }
-
-    .event-desc {
-      font-size: 1.1rem;
-      line-height: 1.6;
-      color: #f0f0e0;
-    }
+    .event-card:hover { transform: translateX(6px); background: rgba(40, 50, 40, 0.9); }
+    .event-year { font-size: 1.8rem; font-weight: 700; color: #e0c090; margin-bottom: 8px; display: flex; align-items: baseline; gap: 12px; }
+    .event-desc { font-size: 1.1rem; line-height: 1.6; color: #f0f0e0; }
 
     /* 數據表格 */
     .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 16px;
-      margin-top: 48px;
-      background: rgba(30,35,30,0.7);
-      padding: 28px;
-      border-radius: 24px;
-      backdrop-filter: blur(4px);
-      border: 1px solid #5a7a5a;
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;
+      margin-top: 48px; background: rgba(30,35,30,0.7); padding: 28px; border-radius: 24px;
+      backdrop-filter: blur(4px); border: 1px solid #5a7a5a;
     }
-
-    .stat-item {
-      text-align: center;
-    }
-
-    .stat-number {
-      font-size: 2.8rem;
-      font-weight: 800;
-      color: #dbb07c;
-    }
-
-    .stat-label {
-      font-size: 1rem;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: #bbb;
-    }
-
-    .footer-note {
-      margin-top: 48px;
-      text-align: right;
-      color: #aaa;
-      font-style: italic;
-      border-top: 1px solid #3a4a3a;
-      padding-top: 24px;
-    }
-
-    /* 語言切換時的文字調整 */
-    .lang-en .event-desc,
-    .lang-zh .event-desc {
-      /* 由js控制 */
-    }
+    .stat-item { text-align: center; }
+    .stat-number { font-size: 2.8rem; font-weight: 800; color: #dbb07c; }
+    .stat-label { font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; color: #bbb; }
+    .footer-note { margin-top: 48px; text-align: right; color: #aaa; font-style: italic; border-top: 1px solid #3a4a3a; padding-top: 24px; }
 
     @media (max-width: 600px) {
-      h1 { font-size: 2.4rem; }
-      .event-year { font-size: 1.5rem; flex-wrap: wrap; }
-      .main-content { padding: 20px 16px; }
+      h1 { font-size: 2.4rem; } .event-year { font-size: 1.5rem; flex-wrap: wrap; } .main-content { padding: 20px 16px; }
     }
   </style>
 </head>
 <body class="lang-zh">
 
-<!-- 固定頂欄 (與主站一致) -->
 <header class="top-bar">
   <div class="menu-area">
-    <a href="../index.html" class="back-link" data-lang-key="back_home">← 返回主頁</a>
+    <div class="menu-dots" id="menuToggle">⋯</div>
+    <div class="nav-dropdown" id="navDropdown">
+      <a href="../index.html#section1" class="nav-item" data-lang-key="nav_home">🏔️ 主頁</a>
+      <a href="../Map/map.html" class="nav-item" data-lang-key="nav_map">🗺️ 攀岩地圖</a>
+      <a href="../index.html#sectionIntro" class="nav-item" data-lang-key="nav_intro">🧗 入門分類</a>
+      <a href="../index.html#sectionGear" class="nav-item" data-lang-key="nav_gear">🪢 裝備介紹</a>
+      <a href="../history/history.html" class="nav-item" data-lang-key="nav_history">📜 香港攀岩史</a>
+    </div>
   </div>
   <div class="site-title" data-lang-key="history_title">香港攀岩歷史</div>
   <div class="lang-switch" id="langToggle">中 / EN</div>
 </header>
 
-<!-- 主要內容 -->
 <main class="main-content">
   <h1 data-lang-key="page_heading">攀岩編年史</h1>
   <div class="subhead" data-lang-key="page_subhead">從獅子山首攀到國際舞台，香港攀岩的演進足跡</div>
 
-  <!-- 時間線將由JS動態生成，以支持語言切換 -->
   <div id="timelineContainer" class="timeline"></div>
 
-  <!-- 關鍵數據區塊 (靜態數字) -->
   <div class="stats-grid">
     <div class="stat-item">
       <div class="stat-number">25</div>
@@ -291,29 +137,14 @@
   (function(){
     "use strict";
 
-    // ---------- 多語言字典 (歷史頁面專用) ----------
     const langDict = {
       zh: {
-        back_home: '← 返回主頁',
-        history_title: '香港攀岩歷史',
-        page_heading: '攀岩編年史',
-        page_subhead: '從獅子山首攀到國際舞台，香港攀岩的演進足跡',
-        stat_crags: '天然岩場',
-        stat_routes: '運動攀登路線',
-        stat_boulders: '抱石路線',
-        stat_gyms: '抱石場地',
-        stat_coaches: '註冊教練',
+        nav_home: '🏔️ 主頁', nav_map: '🗺️ 攀岩地圖', nav_intro: '🧗 入門分類', nav_gear: '🪢 裝備介紹', nav_history: '📜 香港攀岩史',
+        history_title: '香港攀岩歷史', page_heading: '攀岩編年史', page_subhead: '從獅子山首攀到國際舞台，香港攀岩的演進足跡',
+        stat_crags: '天然岩場', stat_routes: '運動攀登路線', stat_boulders: '抱石路線', stat_gyms: '抱石場地', stat_coaches: '註冊教練',
         data_source: '資料來源：《Hong Kong Rock》2023 · theCrag · 中國香港攀山及攀登總會',
-        // 年代標題
-        era_1950s: '1950s — 開端與啟蒙',
-        era_1960s: '1960s — 首本指南出版',
-        era_1970s: '1970s — 走向大眾',
-        era_1980s: '1980s — 組織化與正規化',
-        era_1990s: '1990s — 國際賽事降臨',
-        era_2000s: '2000s — 輝煌十年',
-        era_2010s: '2010s — 整合與專業化',
-        era_2020s: '2020s — 新時代',
-        // 事件數據 (按年代分組)
+        era_1950s: '1950s — 開端與啟蒙', era_1960s: '1960s — 首本指南出版', era_1970s: '1970s — 走向大眾', era_1980s: '1980s — 組織化與正規化',
+        era_1990s: '1990s — 國際賽事降臨', era_2000s: '2000s — 輝煌十年', era_2010s: '2010s — 整合與專業化', era_2020s: '2020s — 新時代',
         events: {
           '1950s': [
             { year: '1956', desc: '英軍駐守啟德機場時首攀獅子山，為香港有紀錄的首次攀岩活動。同年1月，皇家空軍組成首支攀山搶救隊，隊長 Tony Smith 成立香港首個攀岩組織「香港攀山會」（軍方組織）。' },
@@ -363,24 +194,12 @@
         }
       },
       en: {
-        back_home: '← Back to Home',
-        history_title: 'HK Climbing History',
-        page_heading: 'Chronicle of Climbing',
-        page_subhead: 'From the first ascent of Lion Rock to the international stage',
-        stat_crags: 'Natural Crags',
-        stat_routes: 'Sport Routes',
-        stat_boulders: 'Boulder Problems',
-        stat_gyms: 'Bouldering Gyms',
-        stat_coaches: 'Registered Coaches',
+        nav_home: '🏔️ Home', nav_map: '🗺️ Map', nav_intro: '🧗 Categories', nav_gear: '🪢 Gear', nav_history: '📜 History',
+        history_title: 'HK Climbing History', page_heading: 'Chronicle of Climbing', page_subhead: 'From the first ascent of Lion Rock to the international stage',
+        stat_crags: 'Natural Crags', stat_routes: 'Sport Routes', stat_boulders: 'Boulder Problems', stat_gyms: 'Bouldering Gyms', stat_coaches: 'Registered Coaches',
         data_source: 'Sources: Hong Kong Rock 2023 · theCrag · CHKMCU',
-        era_1950s: '1950s — Beginnings',
-        era_1960s: '1960s — First Guidebook',
-        era_1970s: '1970s — Going Public',
-        era_1980s: '1980s — Organisation & Formalisation',
-        era_1990s: '1990s — International Events Arrive',
-        era_2000s: '2000s — Golden Decade',
-        era_2010s: '2010s — Integration & Professionalisation',
-        era_2020s: '2020s — New Era',
+        era_1950s: '1950s — Beginnings', era_1960s: '1960s — First Guidebook', era_1970s: '1970s — Going Public', era_1980s: '1980s — Organisation',
+        era_1990s: '1990s — Int. Events', era_2000s: '2000s — Golden Decade', era_2010s: '2010s — Integration', era_2020s: '2020s — New Era',
         events: {
           '1950s': [
             { year: '1956', desc: 'First recorded climb in Hong Kong: British military personnel ascended Lion Rock. In January, the RAF formed the first mountain rescue team; Tony Smith established the "Hong Kong Mountaineering Club" (military).' },
@@ -433,7 +252,6 @@
 
     let currentLang = 'zh';
 
-    // 渲染時間線
     function renderTimeline(lang) {
       const container = document.getElementById('timelineContainer');
       const dict = langDict[lang];
@@ -445,46 +263,39 @@
         if (!eventsData[era]) continue;
         const eraTitle = dict[`era_${era}`] || era;
         html += `<div class="era">${eraTitle}</div>`;
-        
         eventsData[era].forEach(ev => {
-          html += `
-            <div class="event-card">
-              <div class="event-year">${ev.year} <small>${lang === 'zh' ? '' : ''}</small></div>
-              <div class="event-desc">${ev.desc}</div>
-            </div>
-          `;
+          html += `<div class="event-card"><div class="event-year">${ev.year}</div><div class="event-desc">${ev.desc}</div></div>`;
         });
       }
       container.innerHTML = html;
     }
 
-    // 應用語言至所有帶 data-lang-key 的元素
     function applyLanguage(lang) {
+      currentLang = lang;
       document.querySelectorAll('[data-lang-key]').forEach(el => {
         const key = el.getAttribute('data-lang-key');
-        if (langDict[lang] && langDict[lang][key]) {
-          el.textContent = langDict[lang][key];
-        }
+        if (langDict[lang] && langDict[lang][key]) { el.textContent = langDict[lang][key]; }
       });
-      // 重新繪製時間線
       renderTimeline(lang);
-      // 更新body class (可選)
       document.body.className = `lang-${lang}`;
-      currentLang = lang;
     }
 
-    // 語言切換
+    const menuToggle = document.getElementById('menuToggle');
+    const navDropdown = document.getElementById('navDropdown');
+    menuToggle.addEventListener('click', (e) => { e.stopPropagation(); navDropdown.classList.toggle('active'); });
+    document.addEventListener('click', (e) => { if (!menuToggle.contains(e.target) && !navDropdown.contains(e.target)) navDropdown.classList.remove('active'); });
+
     const langToggle = document.getElementById('langToggle');
+    const savedLang = localStorage.getItem('climb_lang') || 'zh';
+    applyLanguage(savedLang);
+    langToggle.textContent = savedLang === 'zh' ? '中 / EN' : 'EN / 中';
+
     langToggle.addEventListener('click', () => {
       const newLang = currentLang === 'zh' ? 'en' : 'zh';
+      localStorage.setItem('climb_lang', newLang);
       applyLanguage(newLang);
       langToggle.textContent = newLang === 'zh' ? '中 / EN' : 'EN / 中';
     });
-
-    // 初始化 (預設中文)
-    applyLanguage('zh');
-
-    // 調整返回主頁鏈接確保路徑正確 (已寫在href)
   })();
 </script>
 

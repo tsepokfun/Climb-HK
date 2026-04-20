@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>人工抱石 · 攀·香港</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { background:black; color:white; font-family:system-ui, 'Noto Sans HK', sans-serif; min-height:100vh; display:flex; flex-direction:column; }
+    body::before { content:""; position:fixed; inset:0; background:url('../image/ClimbingRoute.png') center/cover; opacity:0.8; z-index:0; pointer-events:none; }
+    
+    .top-bar { position:fixed; top:0; left:0; width:100%; height:64px; background:black; color:white; display:flex; align-items:center; justify-content:space-between; padding:0 24px; z-index:200; border-bottom:1px solid #333; }
+    .menu-area { position: relative; }
+    .menu-dots { font-size: 28px; line-height: 1; cursor: pointer; letter-spacing: 2px; user-select: none; padding: 8px 0; color: white; }
+    .nav-dropdown { position: absolute; top: 50px; left: -10px; background: rgba(20, 20, 20, 0.95); backdrop-filter: blur(8px); border: 1px solid #555; border-radius: 12px; padding: 12px 0; min-width: 180px; display: none; flex-direction: column; box-shadow: 0 8px 20px rgba(0,0,0,0.6); z-index: 220; }
+    .nav-dropdown.active { display: flex; }
+    .nav-item { padding: 12px 24px; color: #f0f0e0; font-size: 1.1rem; text-decoration: none; cursor: pointer; transition: background 0.2s; white-space: nowrap; }
+    .nav-item:hover { background: #3a5a3a; color: white; }
+    .site-title { font-weight:600; font-size:1.4rem; letter-spacing: 2px; }
+    .lang-switch { background:#2a2a2a; color:#ddd; border:1px solid #777; padding:6px 14px; border-radius:30px; font-weight:bold; cursor:pointer; font-size: 1rem; transition: 0.2s; user-select: none;}
+    .lang-switch:hover { background: #4a6a4a; color: white; border-color: #aaa; }
+
+    .main-content { margin-top:64px; padding:40px 24px 60px; max-width:1100px; margin-left:auto; margin-right:auto; width:100%; position:relative; z-index:2; background:rgba(0,0,0,0.6); backdrop-filter:blur(3px); min-height:calc(100vh - 64px); }
+    h1 { font-size:3rem; border-left:6px solid #b98c5f; padding-left:20px; margin-bottom:16px; }
+    h2 { font-size:2rem; margin:40px 0 16px; color:#dbb07c; }
+    h3 { font-size:1.5rem; margin:24px 0 12px; color:#c0b090; }
+    p, li { line-height:1.7; color:#eee; }
+    ul, ol { padding-left:24px; margin:16px 0; }
+    table { width:100%; border-collapse:collapse; margin:24px 0; background:rgba(0,0,0,0.3); }
+    th, td { padding:12px; border:1px solid #5a6a5a; text-align:left; }
+    th { background:#3a5a3a; }
+    .questionnaire { background:rgba(20,30,20,0.9); padding:32px; border-radius:24px; margin-top:48px; border:1px solid #6a8a6a; }
+    .form-group { margin-bottom:20px; }
+    label { display:block; margin-bottom:6px; color:#ccc; }
+    input, select, textarea { width:100%; padding:12px; background:#1a1a1a; border:1px solid #555; color:white; border-radius:8px; font-size:1rem; }
+    button { background:#b98c5f; color:black; font-weight:bold; padding:12px 28px; border:none; border-radius:40px; cursor:pointer; font-size:1.1rem; }
+    .footer-note { margin-top:32px; opacity:0.7; }
+    @media (max-width:600px) { h1 { font-size:2.2rem; } }
+  </style>
+</head>
+<body>
+<header class="top-bar">
+  <div class="menu-area">
+    <div class="menu-dots" id="menuToggle">⋯</div>
+    <div class="nav-dropdown" id="navDropdown">
+      <a href="../index.html#section1" class="nav-item" data-lang-key="nav_home">🏔️ 主頁</a>
+      <a href="../Map/map.html" class="nav-item" data-lang-key="nav_map">🗺️ 攀岩地圖</a>
+      <a href="../index.html#sectionIntro" class="nav-item" data-lang-key="nav_intro">🧗 入門分類</a>
+      <a href="../index.html#sectionGear" class="nav-item" data-lang-key="nav_gear">🪢 裝備介紹</a>
+      <a href="../history/history.html" class="nav-item" data-lang-key="nav_history">📜 香港攀岩史</a>
+    </div>
+  </div>
+  <div class="site-title" data-lang-key="title">人工抱石</div>
+  <div class="lang-switch" id="langToggle">中 / EN</div>
+</header>
+<main class="main-content">
+  <h1 data-lang-key="heading">🧗‍♂️ 人工抱石<br><span style="font-size:1.6rem;">Artificial Bouldering</span></h1>
+  <div id="contentContainer"></div>
+  <div class="questionnaire">
+    <h2 data-lang-key="q_title">📋 初學者資訊問卷</h2>
+    <form id="beginnerForm">
+      <div class="form-group"><label data-lang-key="q_name">姓名 / Name</label><input type="text" name="name" required></div>
+      <div class="form-group"><label data-lang-key="q_email">電郵 / Email</label><input type="email" name="email" required></div>
+      <div class="form-group"><label data-lang-key="q_exp">攀岩經驗</label><select name="experience"><option value="none">無經驗</option><option value="beginner">少於3個月</option><option value="some">3-12個月</option><option value="regular">1年以上</option></select></div>
+      <div class="form-group"><label data-lang-key="q_goal">攀岩目標</label><textarea name="goal" rows="2"></textarea></div>
+      <button type="submit" data-lang-key="q_submit">提交</button>
+    </form>
+  </div>
+  <div class="footer-note" data-lang-key="footer">* 提交後我們會將指南發送至您的郵箱</div>
+</main>
+<script>
+  (function(){
+    const langDict = {
+      zh: {
+        nav_home: '🏔️ 主頁', nav_map: '🗺️ 攀岩地圖', nav_intro: '🧗 入門分類', nav_gear: '🪢 裝備介紹', nav_history: '📜 香港攀岩史',
+        title: '人工抱石', heading: '🧗‍♂️ 人工抱石', 
+        intro_title: '定義與特點', intro_text: '人工抱石是指在室內人工岩壁上進行的抱石運動，岩壁高度控制在5米以內，下方鋪設專業海綿墊作為安全緩衝。無需繩索或安全帶，只需一雙攀岩鞋與鎂粉即可開始，被視為入門門檻最低的攀岩形式。',
+        gear_title: '必要裝備', gear_items: ['攀岩鞋：室內抱石可選擇較貼合的拖鞋式攀岩鞋。','鎂粉與鎂粉袋：建議使用粉球，可減少粉塵飛揚。','合適的服裝：選擇彈性好、不妨礙動作的運動服裝。'],
+        tips_title: '初學者技巧與注意事項', tips_items: ['從簡單路線開始：室內抱石場通常設有V0或VB等級的入門路線。','學習正確墜落姿勢：墜落時應彎曲膝蓋、向後坐，避免用手撐地。','多利用腿部力量：初學者常習慣只用手臂，應多利用腿部發力。','觀察路線：攀爬前先觀察整條路線的岩點配置，規劃動作順序。'],
+        grade_title: '難度分級', grade_table: [['VB','1–3','最簡單入門'],['V0','4','初學者'],['V1','5','初階'],['V2','5+','初階'],['V3','6A','中階']],
+        q_title: '📋 初學者資訊問卷', q_name: '姓名 / Name', q_email: '電郵 / Email', q_exp: '攀岩經驗', q_goal: '攀岩目標', q_submit: '提交', footer: '* 提交後我們會將指南發送至您的郵箱'
+      },
+      en: {
+        nav_home: '🏔️ Home', nav_map: '🗺️ Map', nav_intro: '🧗 Categories', nav_gear: '🪢 Gear', nav_history: '📜 History',
+        title: 'Artificial Bouldering', heading: '🧗‍♂️ Artificial Bouldering',
+        intro_title: 'Definition & Features', intro_text: 'Artificial bouldering takes place on indoor walls under 5m high with padded flooring. No ropes or harness required—just shoes and chalk.',
+        gear_title: 'Essential Gear', gear_items: ['Climbing shoes: snug fit for precision.','Chalk & chalk bag: liquid chalk or ball recommended.','Comfortable athletic clothing.'],
+        tips_title: 'Beginner Tips & Safety', tips_items: ['Start on VB/V0 routes.','Learn to fall: bend knees, roll back, avoid hands.','Use legs more than arms.','Read the route before climbing.'],
+        grade_title: 'Grading', grade_table: [['VB','1–3','Easiest'],['V0','4','Beginner'],['V1','5','Novice'],['V2','5+','Novice'],['V3','6A','Intermediate']],
+        q_title: '📋 Beginner Questionnaire', q_name: 'Name', q_email: 'Email', q_exp: 'Experience', q_goal: 'Climbing Goal', q_submit: 'Submit', footer: '* We will send the guide to your email'
+      }
+    };
+    
+    let currentLang = localStorage.getItem('climb_lang') || 'zh';
+    const container = document.getElementById('contentContainer');
+    
+    function render(lang){
+      const d = langDict[lang];
+      let html = `<h2>${d.intro_title}</h2><p>${d.intro_text}</p>`;
+      html += `<h2>${d.gear_title}</h2><ul>${d.gear_items.map(i=>`<li>${i}</li>`).join('')}</ul>`;
+      html += `<h2>${d.tips_title}</h2><ul>${d.tips_items.map(i=>`<li>${i}</li>`).join('')}</ul>`;
+      html += `<h2>${d.grade_title}</h2><table><tr><th>V</th><th>🇫🇷</th><th></th></tr>`;
+      d.grade_table.forEach(r=>{ html += `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`; });
+      html += `</table>`;
+      container.innerHTML = html;
+      document.querySelectorAll('[data-lang-key]').forEach(el=>{ const k=el.dataset.langKey; if(d[k]) el.textContent = d[k]; });
+    }
+    
+    render(currentLang);
+    document.getElementById('langToggle').textContent = currentLang === 'zh' ? '中 / EN' : 'EN / 中';
+
+    document.getElementById('langToggle').addEventListener('click',()=>{
+      currentLang = currentLang==='zh'?'en':'zh';
+      localStorage.setItem('climb_lang', currentLang);
+      render(currentLang);
+      document.getElementById('langToggle').textContent = currentLang==='zh'?'中 / EN':'EN / 中';
+    });
+
+    const menuToggle = document.getElementById('menuToggle');
+    const navDropdown = document.getElementById('navDropdown');
+    menuToggle.addEventListener('click', (e) => { e.stopPropagation(); navDropdown.classList.toggle('active'); });
+    document.addEventListener('click', (e) => { if (!menuToggle.contains(e.target) && !navDropdown.contains(e.target)) navDropdown.classList.remove('active'); });
+
+    document.getElementById('beginnerForm').addEventListener('submit',(e)=>{ e.preventDefault(); alert(currentLang==='zh'?'感謝提交！我們會盡快回覆。':'Thanks! We will reply soon.'); });
+  })();
+</script>
+</body>
+</html>

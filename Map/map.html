@@ -1,174 +1,505 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh-HK">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>香港攀岩地图 · 真实底图</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>攀岩地圖 | 攀 · 香港</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, sans-serif; }
-        body { background: #1a2f26; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
-        .card { max-width: 1300px; width: 100%; background: #e2ede4; border-radius: 36px; padding: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.25); }
-        h1 { font-size: 2.4rem; color: #1d4e3d; margin-bottom: 4px; }
-        .sub { color: #2a5e4a; margin-bottom: 20px; font-size: 1.1rem; }
-        .map-wrapper { background: #b3ccbc; border-radius: 28px; padding: 16px; }
-        .canvas-container { border-radius: 20px; overflow: auto; max-height: 75vh; }
-        #displayCanvas { display: block; width: 100%; height: auto; border-radius: 16px; cursor: default; }
-        .info-bar { display: flex; align-items: center; margin-top: 16px; gap: 20px; flex-wrap: wrap; }
-        .hover-box { background: #1e3a2f; color: #ecf7ef; padding: 10px 24px; border-radius: 60px; min-width: 260px; font-weight: 500; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .legend { display: flex; gap: 18px; margin-left: auto; }
-        .legend span { display: flex; align-items: center; gap: 5px; }
-        .dot { width: 14px; height: 14px; border-radius: 50%; display: inline-block; border: 2px solid white; }
-        .spot-panel { margin-top: 20px; background: #f4faf6; border-radius: 28px; padding: 16px 24px; }
-        .spot-panel h3 { color: #1f4a3c; margin-bottom: 10px; }
-        #spotDetail { color: #1d3d2f; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, 'Helvetica Neue', 'Noto Sans HK', sans-serif;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+            background-color: black;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background-image: url('../image/ClimbingRoute.png');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.8;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        :root {
+            --primary: #1a1a1a;
+            --natural-boulder: #3a5a3a;
+            --artificial-boulder: #2d5a7b;
+            --natural-climb: #8a5a3a;
+            --artificial-climb: #5a3a7b;
+            --map-bg: rgba(17, 17, 17, 0.7);
+        }
+
+        /* 頂部導航列 */
+        .top-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 64px;
+            background-color: black;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            z-index: 200;
+            border-bottom: 1px solid #333;
+        }
+
+        .menu-area { position: relative; display: flex; align-items: center; gap: 16px; }
+        .menu-dots {
+            font-size: 28px; line-height: 1; cursor: pointer;
+            letter-spacing: 2px; user-select: none; padding: 8px 0;
+        }
+
+        .nav-dropdown {
+            position: absolute; top: 50px; left: -10px;
+            background: rgba(20, 20, 20, 0.95); backdrop-filter: blur(8px);
+            border: 1px solid #555; border-radius: 12px;
+            padding: 12px 0; min-width: 180px; display: none;
+            flex-direction: column; box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+            z-index: 220;
+        }
+        .nav-dropdown.active { display: flex; }
+        .nav-item {
+            padding: 12px 24px; color: #f0f0e0; font-size: 1.1rem;
+            cursor: pointer; transition: background 0.2s; white-space: nowrap; text-decoration: none;
+        }
+        .nav-item:hover { background: #3a5a3a; color: white; }
+
+        .site-title { font-weight: 600; font-size: 1.4rem; letter-spacing: 2px; }
+
+        .lang-switch {
+            background: #2a2a2a; color: #ddd; border: 1px solid #777;
+            padding: 6px 14px; border-radius: 30px; font-size: 1rem;
+            font-weight: bold; cursor: pointer; transition: 0.2s; user-select: none;
+        }
+        .lang-switch:hover { background: #4a6a4a; color: white; border-color: #aaa; }
+
+        /* 控制列 */
+        .controls-bar {
+            margin-top: 64px;
+            background: rgba(20, 20, 20, 0.85);
+            backdrop-filter: blur(10px);
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            border-bottom: 1px solid #333;
+            z-index: 100;
+        }
+
+        .search-box input {
+            padding: 10px 18px;
+            border-radius: 25px;
+            border: 1px solid #555;
+            background: #1a1a1a;
+            color: white;
+            width: 280px;
+            outline: none;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        .search-box input:focus { border-color: #b0b080; box-shadow: 0 0 8px rgba(176,176,128,0.3); }
+
+        .filters { display: flex; gap: 10px; flex-wrap: wrap; }
+
+        .filter-btn {
+            border: 1px solid #444;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            color: #ddd;
+            font-weight: bold;
+            font-size: 13px;
+            transition: all 0.3s;
+            background: transparent;
+        }
+        .filter-btn:hover { transform: translateY(-2px); }
+        .filter-btn.active { color: white; border-color: white; }
+
+        .btn-all.active { background-color: #555; }
+        .btn-nb.active { background-color: var(--natural-boulder); }
+        .btn-ab.active { background-color: var(--artificial-boulder); }
+        .btn-nc.active { background-color: var(--natural-climb); }
+        .btn-ac.active { background-color: var(--artificial-climb); }
+
+        /* 主體佈局 */
+        .container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        #map-area {
+            flex: 2;
+            background-color: var(--map-bg);
+            overflow: auto;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #map-inner {
+            position: relative;
+            width: 1000px;
+            height: 766px;
+            max-width: none;
+            background-image: url('../image/map.jpg');
+            background-size: cover;
+            box-shadow: 0 0 30px rgba(0,0,0,0.8);
+            border-radius: 8px;
+        }
+
+        .map-pin {
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            border: 2px solid white;
+            box-shadow: 0 0 8px rgba(0,0,0,0.8);
+            transform: translate(-50%, -50%);
+            cursor: pointer;
+            transition: all 0.2s;
+            z-index: 10;
+        }
+        .map-pin:hover, .map-pin.highlight {
+            transform: translate(-50%, -50%) scale(1.6);
+            box-shadow: 0 0 15px rgba(255,255,255,0.5);
+            z-index: 20;
+        }
+
+        #map-popup {
+            position: absolute;
+            background: rgba(25, 25, 25, 0.95);
+            backdrop-filter: blur(5px);
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid #444;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.8);
+            width: 260px;
+            transform: translate(-50%, -120%);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 30;
+        }
+        #map-popup.show { opacity: 1; pointer-events: auto; }
+        #map-popup::after {
+            content: ''; position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%);
+            border-width: 10px 10px 0; border-style: solid;
+            border-color: rgba(25, 25, 25, 0.95) transparent transparent transparent;
+        }
+        #map-popup h3 { margin-bottom: 8px; color: white; font-size: 16px; border-bottom: 1px solid #444; padding-bottom: 5px;}
+        #map-popup p { font-size: 13px; margin-bottom: 5px; color: #ccc; }
+        #map-popup strong { color: #aaa; }
+
+        #sidebar {
+            flex: 1;
+            min-width: 350px;
+            max-width: 400px;
+            background: rgba(15, 15, 15, 0.95);
+            border-left: 1px solid #333;
+            padding: 15px;
+            overflow-y: auto;
+        }
+
+        .spot-card {
+            background: #1e1e1e;
+            border: 1px solid #333;
+            border-left: 5px solid gray;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .spot-card:hover {
+            transform: translateY(-3px);
+            background: #252525;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            border-color: #555;
+        }
+
+        .spot-type {
+            display: inline-block; padding: 4px 10px; border-radius: 4px;
+            color: white; font-size: 12px; font-weight: bold; margin-bottom: 10px;
+        }
+        .spot-title { font-size: 17px; color: #fff; margin-bottom: 10px; }
+        .spot-info { font-size: 13px; color: #bbb; line-height: 1.6; margin-bottom: 6px; }
+        .spot-info strong { color: #888; }
+
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #111; }
+        ::-webkit-scrollbar-thumb { background: #444; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #666; }
+
+        @media (max-width: 768px) {
+            .controls-bar { flex-direction: column; align-items: stretch; }
+            .search-box input { width: 100%; }
+            .filters { justify-content: center; }
+            .container { flex-direction: column; }
+            #map-area { flex: 1; min-height: 50vh; }
+            #sidebar { flex: 1; max-width: 100%; min-width: 100%; border-left: none; border-top: 1px solid #333; }
+        }
     </style>
 </head>
 <body>
-<div class="card">
-    <h1>🧗 香港攀岩 · 抱石全攻略</h1>
-    <div class="sub">真实底图 · 天然岩壁 · 人工岩馆</div>
-    
-    <div class="map-wrapper">
-        <div class="canvas-container">
-            <canvas id="displayCanvas"></canvas>
+
+    <header class="top-bar">
+        <div class="menu-area">
+            <div class="menu-dots" id="menuToggle">⋯</div>
+            <div class="nav-dropdown" id="navDropdown">
+                <a href="../index.html#section1" class="nav-item" data-lang-key="nav_home">🏔️ 主頁</a>
+                <a href="../Map/map.html" class="nav-item" data-lang-key="nav_map">🗺️ 攀岩地圖</a>
+                <a href="../index.html#sectionIntro" class="nav-item" data-lang-key="nav_intro">🧗 入門分類</a>
+                <a href="../index.html#sectionGear" class="nav-item" data-lang-key="nav_gear">🪢 裝備介紹</a>
+                <a href="../history/history.html" class="nav-item" data-lang-key="nav_history">📜 香港攀岩史</a>
+            </div>
+        </div>
+        <div class="site-title" data-lang-key="site_title">香港攀岩</div>
+        <div class="lang-switch" id="langToggle">中 / EN</div>
+    </header>
+
+    <div class="controls-bar">
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="搜尋地點、難度或簡介..." data-lang-key="search_ph">
+        </div>
+        <div class="filters">
+            <button class="filter-btn btn-all active" onclick="filterSpots('all', event)" data-lang-key="f_all">顯示全部</button>
+            <button class="filter-btn btn-nb" onclick="filterSpots('NB', event)" data-lang-key="f_nb">天然抱石</button>
+            <button class="filter-btn btn-ab" onclick="filterSpots('AB', event)" data-lang-key="f_ab">人工抱石</button>
+            <button class="filter-btn btn-nc" onclick="filterSpots('NC', event)" data-lang-key="f_nc">天然攀登</button>
+            <button class="filter-btn btn-ac" onclick="filterSpots('AC', event)" data-lang-key="f_ac">人工攀登</button>
         </div>
     </div>
-    
-    <div class="info-bar">
-        <div class="hover-box" id="hoverInfo">🖱️ 鼠标悬停查看攀岩点</div>
-        <div class="legend">
-            <span><i class="dot" style="background:#2b6e4f;"></i>天然抱石</span>
-            <span><i class="dot" style="background:#d97706;"></i>人工抱石</span>
-            <span><i class="dot" style="background:#1e5f8e;"></i>天然攀登</span>
-            <span><i class="dot" style="background:#b13e6b;"></i>人工攀登</span>
+
+    <div class="container">
+        <div id="map-area">
+            <div id="map-inner">
+                <div id="map-popup">
+                    <h3 id="popup-title">Name</h3>
+                    <p><strong data-lang-key="p_type">類型：</strong> <span id="popup-type"></span></p>
+                    <p><strong data-lang-key="p_diff">難度：</strong> <span id="popup-diff"></span></p>
+                    <p id="popup-desc"></p>
+                </div>
+            </div>
         </div>
+        <div id="sidebar"></div>
     </div>
-    
-    <div class="spot-panel" id="spotDetail">
-        <h3>📍 点击标记查看详情</h3>
-        <p>地图上共有 <span id="totalSpots">0</span> 个攀岩点。</p>
-    </div>
-</div>
 
-<script>
-    (function(){
-        // ---------- 从采集器导出的 spots 数据粘贴到此处 ----------
-const spots = [
-  {
-    "name": "東龍洲（Tung Lung Chau）",
-    "type": "natural_boulder",
-    "x": 874,
-    "y": 823,
-    "desc": "難度範圍：VB 至 V12  岩石類型：火山岩  地點：西貢南端東龍洲島  前往方法：於鯉魚門三家村碼頭或西灣河碼頭乘街渡前往  路線描述：東龍洲東海岸佈滿懸崖峭壁，是深受歡迎的攀岩熱點。除運動攀登路線外，島上海岸遍佈大量抱石，岩石表面粗糙，摩擦力極佳，適合在欣賞海景的同時挑戰各種抱石路線。"
-  },
-
-        ];
-        // ------------------------------------------------
-        
-        const canvas = document.getElementById('displayCanvas');
-        const ctx = canvas.getContext('2d');
-        const MAP_PATH = '../image/map.jpg';
-        let mapImage = new Image();
-        let imgWidth = 0, imgHeight = 0;
-        
-        const hoverInfo = document.getElementById('hoverInfo');
-        const totalSpan = document.getElementById('totalSpots');
-        const spotDetailDiv = document.getElementById('spotDetail');
-        
-        mapImage.crossOrigin = 'Anonymous';
-        mapImage.src = MAP_PATH;
-        mapImage.onload = function() {
-            imgWidth = mapImage.width;
-            imgHeight = mapImage.height;
-            canvas.width = imgWidth;
-            canvas.height = imgHeight;
-            totalSpan.textContent = spots.length;
-            drawMap();
+    <script>
+        const langDict = {
+            zh: {
+                site_title: '香港攀岩',
+                nav_home: '🏔️ 主頁', nav_map: '🗺️ 攀岩地圖', nav_intro: '🧗 入門分類', nav_gear: '🪢 裝備介紹', nav_history: '📜 香港攀岩史',
+                search_ph: '搜尋地點、難度或簡介...',
+                f_all: '顯示全部', f_nb: '天然抱石', f_ab: '人工抱石', f_nc: '天然攀登', f_ac: '人工攀登',
+                p_type: '類型：', p_diff: '難度：', p_desc: '簡介：', p_trans: '交通：'
+            },
+            en: {
+                site_title: 'HK Climbing',
+                nav_home: '🏔️ Home', nav_map: '🗺️ Map', nav_intro: '🧗 Categories', nav_gear: '🪢 Gear', nav_history: '📜 History',
+                search_ph: 'Search spots, difficulty, or info...',
+                f_all: 'All', f_nb: 'Outdoor Boulder', f_ab: 'Gym Boulder', f_nc: 'Outdoor Climb', f_ac: 'Gym Climb',
+                p_type: 'Type: ', p_diff: 'Grade: ', p_desc: 'Info: ', p_trans: 'Transport: '
+            }
         };
-        mapImage.onerror = () => alert('地图图片加载失败，请确认 ../image/map.jpg 存在。');
-        
-        function drawMap() {
-            if (!imgWidth) return;
-            ctx.drawImage(mapImage, 0, 0, imgWidth, imgHeight);
-            
+
+        let currentLang = 'zh';
+
+        const menuToggle = document.getElementById('menuToggle');
+        const navDropdown = document.getElementById('navDropdown');
+        menuToggle.addEventListener('click', (e) => {
+            e.stopPropagation(); navDropdown.classList.toggle('active');
+        });
+        document.addEventListener('click', (e) => {
+            if (!menuToggle.contains(e.target) && !navDropdown.contains(e.target)) navDropdown.classList.remove('active');
+        });
+
+        function applyLanguage(lang) {
+            currentLang = lang;
+            document.querySelectorAll('[data-lang-key]').forEach(el => {
+                const key = el.getAttribute('data-lang-key');
+                if (langDict[lang] && langDict[lang][key]) {
+                    if(el.tagName === 'INPUT') el.placeholder = langDict[lang][key];
+                    else el.textContent = langDict[lang][key];
+                }
+            });
+            renderSidebar(); 
+            applyFilters();  
+            popup.classList.remove('show'); 
+        }
+
+        document.getElementById('langToggle').addEventListener('click', (e) => {
+            const newLang = currentLang === 'zh' ? 'en' : 'zh';
+            localStorage.setItem('climb_lang', newLang);
+            applyLanguage(newLang);
+            e.target.textContent = newLang === 'zh' ? '中 / EN' : 'EN / 中';
+        });
+
+        const mapBounds = { north: 22.58, south: 22.13, west: 113.82, east: 114.46 };
+
+        const categoryInfo = {
+            'NB': { color: '#3a5a3a', zh: '天然抱石', en: 'Outdoor Bouldering' },
+            'AB': { color: '#2d5a7b', zh: '人工抱石', en: 'Gym Bouldering' },
+            'NC': { color: '#8a5a3a', zh: '天然攀登', en: 'Outdoor Climbing' },
+            'AC': { color: '#5a3a7b', zh: '人工攀登', en: 'Gym Climbing' }
+        };
+
+        const spots = [
+            { id: 1, typeCode: 'NB', lat: 22.213, lng: 114.200, diff: "VB - V12", name: { zh: "舂坎角", en: "Chung Hom Kok" }, desc: { zh: "約97條路線，花崗岩。路況包括手足並用的攀爬石壁。", en: "Around 97 routes on granite. Includes scrambling sections." }, trans: { zh: "中環乘6X等巴士至舂坎角道", en: "Bus 6X from Central to Chung Hom Kok Rd" }},
+            { id: 2, typeCode: 'NB', lat: 22.228, lng: 114.251, diff: "VB - V12+", name: { zh: "石澳 - 抱石區", en: "Shek O - Bouldering" }, desc: { zh: "約143條路線。大頭洲「九宮格」是馳名攀石地。", en: "143 routes. Tai Tau Chau is famous for its intricate rock textures." }, trans: { zh: "筲箕灣乘9號巴士", en: "Bus 9 from Shau Kei Wan" }},
+            { id: 3, typeCode: 'NB', lat: 22.245, lng: 114.290, diff: "VB - V12", name: { zh: "東龍洲 - 抱石", en: "Tung Lung Chau - Boulder" }, desc: { zh: "東海岸佈滿懸崖峭壁，表面粗糙，摩擦力極佳。", en: "East coast cliffs with excellent rough friction." }, trans: { zh: "西灣河/三家村乘街渡", en: "Ferry from Sai Wan Ho / Sam Ka Tsuen" }},
+            { id: 4, typeCode: 'NB', lat: 22.200, lng: 114.130, diff: "VB - V10", name: { zh: "南丫島", en: "Lamma Island" }, desc: { zh: "山地塘一帶有多處天然抱石，如月老石等。", en: "Multiple natural boulders around Mount Stenhouse." }, trans: { zh: "中環4號碼頭乘渡輪", en: "Ferry from Central Pier 4" }},
+            { id: 5, typeCode: 'AB', lat: 22.335, lng: 114.198, diff: "V0 - V10", name: { zh: "JUST CLIMB (新蒲崗店)", en: "JUST CLIMB (San Po Kong)" }, desc: { zh: "超過100條路線，分4大程度12級難度。", en: "Over 100 routes divided into 12 difficulty levels." }, trans: { zh: "新蒲崗", en: "San Po Kong" }},
+            { id: 6, typeCode: 'AB', lat: 22.292, lng: 114.207, diff: "V0 - V7", name: { zh: "Verm City (鰂魚涌)", en: "Verm City (Quarry Bay)" }, desc: { zh: "香港最大抱石場地逾1.8萬呎，設4.5米高牆。", en: "HK's largest gym (18k sq.ft) with 4.5m walls." }, trans: { zh: "鰂魚涌渣華道", en: "Java Road, Quarry Bay" }},
+            { id: 7, typeCode: 'AB', lat: 22.385, lng: 114.195, diff: "V0 - V7+", name: { zh: "HK Climbing Park (沙田)", en: "HK Climbing Park (Shatin)" }, desc: { zh: "高達4.5米的室內抱石區域，多達50條抱石路線。", en: "4.5m tall walls with up to 50 bouldering routes." }, trans: { zh: "沙田富豪花園", en: "Belair Gardens, Shatin" }},
+            { id: 8, typeCode: 'AB', lat: 22.328, lng: 114.163, diff: "V0 - V7", name: { zh: "尚山岩館 (深水埗)", en: "Crux (Sham Shui Po)" }, desc: { zh: "以動物主題分級，設有人氣訓練板Moonboard。", en: "Animal-themed grading, features a Moonboard." }, trans: { zh: "深水埗大南街", en: "Tai Nan Street, Sham Shui Po" }},
+            { id: 9, typeCode: 'NC', lat: 22.230, lng: 114.250, diff: "F4 - F8A+", name: { zh: "石澳 - 運動攀登", en: "Shek O - Sport Climbing" }, desc: { zh: "包含日落隙及技術牆，考驗力量與平衡。", en: "Includes Sunset Crack and Tech Wall, testing power & balance." }, trans: { zh: "筲箕灣乘9號巴士", en: "Bus 9 from Shau Kei Wan" }},
+            { id: 10, typeCode: 'NC', lat: 22.247, lng: 114.288, diff: "F4 - F8A+", name: { zh: "東龍洲 - 攀登", en: "Tung Lung Chau - Climbing" }, desc: { zh: "崖下海浪咆哮，極具挑戰性的海溝及巨牆。", en: "Challenging sea cliff walls and gullies above crashing waves." }, trans: { zh: "乘街渡前往", en: "Ferry from Sai Wan Ho" }},
+            { id: 11, typeCode: 'NC', lat: 22.345, lng: 114.165, diff: "F2B - F8B", name: { zh: "畢架山", en: "Beacon Hill" }, desc: { zh: "花崗岩表面粗糙，擁有超過60條路線。", en: "Rough granite surface with over 60 routes." }, trans: { zh: "石硤尾轉乘32M小巴", en: "Minibus 32M from Shek Kip Mei" }},
+            { id: 12, typeCode: 'NC', lat: 22.352, lng: 114.185, diff: "F5 - F7C+", name: { zh: "獅子山", en: "Lion Rock" }, desc: { zh: "經典多繩距路線「鬼佬」是必爬路線，可俯瞰維港。", en: "Classic multi-pitch 'Gweilo' overlooking Victoria Harbour." }, trans: { zh: "慈雲山徒步上山", en: "Hike up from Tsz Wan Shan" }},
+            { id: 13, typeCode: 'NC', lat: 22.272, lng: 114.155, diff: "F4 - F7B", name: { zh: "中環岩壁", en: "Central Crags" }, desc: { zh: "約109條路線，在摩天大廈簇擁下享受攀岩。", en: "Around 109 routes nestled among skyscrapers." }, trans: { zh: "半山區", en: "Mid-Levels" }},
+            { id: 14, typeCode: 'AC', lat: 22.321, lng: 114.195, diff: "Top Rope/Lead", name: { zh: "JUST CLIMB (啟德)", en: "JUST CLIMB (Kai Tak)" }, desc: { zh: "全港唯一有蓋綜合攀石場。17.5米先鋒牆。", en: "HK's only covered complex. 17.5m lead wall." }, trans: { zh: "啟德體育大道", en: "Kai Tak Sports Avenue" }},
+            { id: 15, typeCode: 'AC', lat: 22.320, lng: 114.160, diff: "Top Rope", name: { zh: "大角咀體育館", en: "Tai Kok Tsui Sports Centre" }, desc: { zh: "共設10條路線(高9米)。需持二級運動攀登證書。", en: "10 routes (9m). Level 2 climbing cert required." }, trans: { zh: "大角咀福全街", en: "Fuk Tsun Street, Tai Kok Tsui" }}
+        ];
+
+        function convertLatLngToXY(lat, lng) {
+            const x = ((lng - mapBounds.west) / (mapBounds.east - mapBounds.west)) * 100;
+            const y = ((mapBounds.north - lat) / (mapBounds.north - mapBounds.south)) * 100;
+            return { x, y };
+        }
+
+        const mapInner = document.getElementById('map-inner');
+        const sidebar = document.getElementById('sidebar');
+        const popup = document.getElementById('map-popup');
+        const searchInput = document.getElementById('searchInput');
+
+        let currentFilter = 'all'; 
+        let currentSearchTerm = '';
+        const pinElements = {};
+        const cardElements = {};
+
+        function initMapPins() {
             spots.forEach(spot => {
-                let color = '#2b6e4f';
-                if (spot.type === 'artificial_boulder') color = '#d97706';
-                else if (spot.type === 'natural_sport') color = '#1e5f8e';
-                else if (spot.type === 'artificial_sport') color = '#b13e6b';
+                const pos = convertLatLngToXY(spot.lat, spot.lng);
+                const pin = document.createElement('div');
+                pin.className = 'map-pin';
+                pin.style.left = `${pos.x}%`;
+                pin.style.top = `${pos.y}%`;
+                pin.style.backgroundColor = categoryInfo[spot.typeCode].color;
+                pin.style.borderColor = '#ccc';
+                pin.addEventListener('click', () => handleSpotSelection(spot.id));
+                mapInner.appendChild(pin);
+                pinElements[spot.id] = pin;
+            });
+        }
+
+        function renderSidebar() {
+            sidebar.innerHTML = '';
+            spots.forEach(spot => {
+                const card = document.createElement('div');
+                card.className = 'spot-card';
+                card.style.borderLeftColor = categoryInfo[spot.typeCode].color;
                 
-                ctx.shadowColor = '#1a2f25';
-                ctx.shadowBlur = 6;
-                ctx.beginPath();
-                ctx.arc(spot.x, spot.y, 8, 0, 2*Math.PI);
-                ctx.fillStyle = color;
-                ctx.fill();
-                ctx.strokeStyle = 'white';
-                ctx.lineWidth = 2.2;
-                ctx.stroke();
-                ctx.beginPath();
-                ctx.arc(spot.x, spot.y, 4, 0, 2*Math.PI);
-                ctx.fillStyle = '#fff9e6';
-                ctx.fill();
-                ctx.shadowBlur = 0;
+                const typeName = categoryInfo[spot.typeCode][currentLang];
+                const lblDiff = langDict[currentLang].p_diff;
+                const lblDesc = langDict[currentLang].p_desc;
+                const lblTrans = langDict[currentLang].p_trans;
+
+                card.innerHTML = `
+                    <span class="spot-type" style="background-color: ${categoryInfo[spot.typeCode].color}">${typeName}</span>
+                    <h3 class="spot-title">${spot.name[currentLang]}</h3>
+                    <div class="spot-info"><strong>${lblDiff}</strong> ${spot.diff}</div>
+                    <div class="spot-info"><strong>${lblDesc}</strong> ${spot.desc[currentLang]}</div>
+                    <div class="spot-info"><strong>${lblTrans}</strong> ${spot.trans[currentLang]}</div>
+                `;
+                card.addEventListener('click', () => handleSpotSelection(spot.id));
+                sidebar.appendChild(card);
+                cardElements[spot.id] = card;
             });
+            applyFilters(); 
         }
-        
-        // 交互：悬停与点击
-        function handleMouseMove(e) {
-            const rect = canvas.getBoundingClientRect();
-            const scaleX = canvas.width / rect.width;
-            const scaleY = canvas.height / rect.height;
-            const mouseX = (e.clientX - rect.left) * scaleX;
-            const mouseY = (e.clientY - rect.top) * scaleY;
+
+        function handleSpotSelection(id) {
+            const spot = spots.find(s => s.id === id);
+            if (!spot) return;
+
+            Object.values(pinElements).forEach(p => p.classList.remove('highlight'));
+            pinElements[id].classList.add('highlight');
+
+            const pos = convertLatLngToXY(spot.lat, spot.lng);
+            popup.style.left = `${pos.x}%`;
+            popup.style.top = `${pos.y}%`;
+            popup.style.borderColor = categoryInfo[spot.typeCode].color;
             
-            let closest = null;
-            let minDist = 20;
-            spots.forEach(spot => {
-                const dx = mouseX - spot.x, dy = mouseY - spot.y;
-                const dist = Math.sqrt(dx*dx + dy*dy);
-                if (dist < minDist) { minDist = dist; closest = spot; }
-            });
-            if (closest) {
-                hoverInfo.innerHTML = `📍 ${closest.name}  ·  ${closest.desc || ''}`;
-            } else {
-                hoverInfo.innerHTML = `🖱️ 鼠标悬停查看攀岩点`;
-            }
-        }
-        
-        function handleCanvasClick(e) {
-            const rect = canvas.getBoundingClientRect();
-            const scaleX = canvas.width / rect.width;
-            const scaleY = canvas.height / rect.height;
-            const clickX = (e.clientX - rect.left) * scaleX;
-            const clickY = (e.clientY - rect.top) * scaleY;
+            document.getElementById('popup-title').innerText = spot.name[currentLang];
+            document.getElementById('popup-type').innerText = categoryInfo[spot.typeCode][currentLang];
+            document.getElementById('popup-diff').innerText = spot.diff;
+            document.getElementById('popup-desc').innerText = spot.desc[currentLang];
             
-            let closest = null;
-            let minDist = 25;
-            spots.forEach(spot => {
-                const dx = clickX - spot.x, dy = clickY - spot.y;
-                const dist = Math.sqrt(dx*dx + dy*dy);
-                if (dist < minDist) { minDist = dist; closest = spot; }
-            });
-            if (closest) {
-                let typeStr = '';
-                if (closest.type === 'natural_boulder') typeStr = '🌿 天然抱石';
-                else if (closest.type === 'artificial_boulder') typeStr = '🏢 人工抱石';
-                else if (closest.type === 'natural_sport') typeStr = '⛰️ 天然攀登';
-                else typeStr = '🧗 人工攀登';
-                spotDetailDiv.innerHTML = `<h3>🧗 ${closest.name}</h3>
-                    <p><strong>类型:</strong> ${typeStr} &nbsp; | &nbsp; <strong>描述:</strong> ${closest.desc || '暂无'}</p>
-                    <p style="margin-top:8px; color:#386655;">坐标: (${Math.round(closest.x)}, ${Math.round(closest.y)})</p>`;
-            }
+            popup.classList.add('show');
+
+            const mapArea = document.getElementById('map-area');
+            const pinRect = pinElements[id].getBoundingClientRect();
+            const areaRect = mapArea.getBoundingClientRect();
+            mapArea.scrollBy({ left: pinRect.left - areaRect.left - (areaRect.width/2), top: pinRect.top - areaRect.top - (areaRect.height/2), behavior: 'smooth' });
+            cardElements[id].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
-        
-        canvas.addEventListener('mousemove', handleMouseMove);
-        canvas.addEventListener('click', handleCanvasClick);
-        canvas.addEventListener('mouseleave', () => { hoverInfo.innerHTML = '🖱️ 鼠标悬停查看攀岩点'; });
-        
-        // 初始化显示总数
-        totalSpan.textContent = spots.length;
-    })();
-</script>
+
+        function applyFilters() {
+            popup.classList.remove('show'); 
+            spots.forEach(spot => {
+                const matchCategory = (currentFilter === 'all' || spot.typeCode === currentFilter);
+                const searchData = `${spot.name.zh} ${spot.name.en} ${spot.diff} ${spot.desc.zh} ${spot.desc.en} ${spot.trans.zh} ${spot.trans.en}`.toLowerCase();
+                const matchSearch = searchData.includes(currentSearchTerm);
+                const isMatch = matchCategory && matchSearch;
+                
+                if(pinElements[spot.id]) pinElements[spot.id].style.display = isMatch ? 'block' : 'none';
+                if(cardElements[spot.id]) cardElements[spot.id].style.display = isMatch ? 'block' : 'none';
+            });
+        }
+
+        window.filterSpots = function(type, event) {
+            currentFilter = type;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            if(event) event.target.classList.add('active');
+            applyFilters();
+        };
+
+        searchInput.addEventListener('input', function(e) {
+            currentSearchTerm = e.target.value.toLowerCase().trim(); 
+            applyFilters();
+        });
+
+        mapInner.addEventListener('click', function(e) {
+            if (e.target === mapInner) {
+                popup.classList.remove('show');
+                Object.values(pinElements).forEach(p => p.classList.remove('highlight'));
+            }
+        });
+
+        initMapPins();
+        const savedLang = localStorage.getItem('climb_lang') || 'zh';
+        document.getElementById('langToggle').textContent = savedLang === 'zh' ? '中 / EN' : 'EN / 中';
+        applyLanguage(savedLang);
+
+    </script>
 </body>
 </html>

@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>攀登裝備 · 攀·香港</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      background-color: black;
+      color: white;
+      font-family: system-ui, -apple-system, 'Helvetica Neue', 'Noto Sans HK', sans-serif;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: ""; position: fixed; inset: 0;
+      background-image: url('../image/ClimbingRoute.png');
+      background-size: cover; background-position: center;
+      opacity: 0.8; z-index: -1; pointer-events: none;
+    }
+
+    /* 頂欄 */
+    .top-bar {
+      position: fixed; top: 0; left: 0; width: 100%; height: 64px;
+      background-color: black; color: white; display: flex;
+      align-items: center; justify-content: space-between;
+      padding: 0 24px; z-index: 200; border-bottom: 1px solid #333;
+    }
+    .menu-area { position: relative; display: flex; align-items: center; gap: 16px; }
+    .menu-dots { font-size: 28px; line-height: 1; cursor: pointer; letter-spacing: 2px; user-select: none; padding: 8px 0; color: white; }
+    .nav-dropdown {
+      position: absolute; top: 50px; left: -10px; background: rgba(20, 20, 20, 0.95); backdrop-filter: blur(8px);
+      border: 1px solid #555; border-radius: 12px; padding: 12px 0; min-width: 180px; display: none; flex-direction: column;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.6); z-index: 220;
+    }
+    .nav-dropdown.active { display: flex; }
+    .nav-item { padding: 12px 24px; color: #f0f0e0; font-size: 1.1rem; text-decoration: none; cursor: pointer; transition: background 0.2s; white-space: nowrap; }
+    .nav-item:hover { background: #3a5a3a; color: white; }
+    .site-title { font-weight: 600; font-size: 1.4rem; letter-spacing: 2px; }
+    .lang-switch {
+      background: #2a2a2a; color: #ddd; border: 1px solid #777;
+      padding: 6px 14px; border-radius: 30px; font-size: 1rem;
+      font-weight: bold; cursor: pointer; transition: 0.2s; user-select: none;
+    }
+    .lang-switch:hover { background: #4a6a4a; color: white; border-color: #aaa; }
+
+    /* 滾動容器與區塊 */
+    .scroll-container { position: relative; z-index: 1; }
+    .section {
+      min-height: 100vh; width: 100%; position: relative;
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; padding: 80px 5% 60px;
+      scroll-snap-align: start;
+    }
+    
+    .section-content {
+      background: rgba(15, 20, 15, 0.75); backdrop-filter: blur(8px);
+      border: 1px solid #444; border-radius: 24px; padding: 40px;
+      width: 100%; max-width: 1100px; box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+    }
+
+    h2.section-title { font-size: 2.6rem; color: #dbb07c; margin-bottom: 12px; border-left: 6px solid #b98c5f; padding-left: 16px; }
+    p.section-desc { font-size: 1.1rem; color: #ccc; margin-bottom: 32px; }
+
+    /* 網格與卡片設計 */
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; }
+    
+    .card {
+      background: rgba(30, 40, 30, 0.6); border: 1px solid #5a6a5a; border-radius: 16px;
+      padding: 24px; cursor: pointer; transition: all 0.3s; display: flex; flex-direction: column;
+      align-items: center; text-align: center;
+    }
+    .card:hover, .card.active { transform: translateY(-5px); background: rgba(58, 90, 58, 0.8); border-color: #b0b080; box-shadow: 0 8px 20px rgba(0,0,0,0.6); }
+    .card .icon { font-size: 3.5rem; margin-bottom: 16px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5)); }
+    .card h3 { font-size: 1.4rem; color: #f0f0e0; margin-bottom: 8px; }
+
+    /* 產品列表卡片 */
+    .product-card {
+      background: rgba(20, 20, 20, 0.8); border: 1px solid #444; border-radius: 12px; padding: 20px;
+      cursor: pointer; transition: all 0.2s; text-align: left;
+    }
+    .product-card:hover { border-color: #dbb07c; background: rgba(40, 40, 30, 0.9); }
+    .product-card .brand { font-size: 0.9rem; color: #aaa; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+    .product-card .model { font-size: 1.3rem; color: white; font-weight: bold; }
+
+    /* 產品詳情 */
+    .detail-view { display: flex; gap: 40px; flex-wrap: wrap; }
+    .detail-image { flex: 1; min-width: 300px; }
+    .img-placeholder {
+      width: 100%; height: 350px; border-radius: 16px; background: linear-gradient(135deg, #222, #111);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      border: 2px dashed #555; color: #777;
+    }
+    .img-placeholder .icon { font-size: 5rem; margin-bottom: 16px; }
+    .detail-info { flex: 1; min-width: 300px; display: flex; flex-direction: column; justify-content: center; }
+    .detail-info .brand { font-size: 1.2rem; color: #b98c5f; text-transform: uppercase; letter-spacing: 2px; }
+    .detail-info .model { font-size: 2.8rem; margin: 8px 0 24px; color: white; font-weight: 800; line-height: 1.2; }
+    .detail-info .desc { font-size: 1.15rem; color: #ddd; line-height: 1.8; margin-bottom: 32px; }
+    
+    .btn-back {
+      align-self: flex-start; padding: 10px 24px; background: #2a2a2a; color: white;
+      border: 1px solid #555; border-radius: 30px; cursor: pointer; font-size: 1.1rem; transition: 0.2s;
+    }
+    .btn-back:hover { background: #b98c5f; color: black; border-color: #b98c5f; }
+
+    .empty-msg { font-size: 1.2rem; color: #888; text-align: center; padding: 40px 0; font-style: italic; }
+
+    @media (max-width: 768px) {
+      .section-content { padding: 24px; }
+      h2.section-title { font-size: 2rem; }
+      .detail-info .model { font-size: 2rem; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="top-bar">
+  <div class="menu-area">
+    <div class="menu-dots" id="menuToggle">⋯</div>
+    <div class="nav-dropdown" id="navDropdown">
+      <a href="../index.html#section1" class="nav-item" data-lang-key="nav_home">🏔️ 主頁</a>
+      <a href="../Map/map.html" class="nav-item" data-lang-key="nav_map">🗺️ 攀岩地圖</a>
+      <a href="../index.html#sectionIntro" class="nav-item" data-lang-key="nav_intro">🧗 入門分類</a>
+      <a href="../index.html#sectionGear" class="nav-item" data-lang-key="nav_gear">🪢 裝備介紹</a>
+      <a href="../history/history.html" class="nav-item" data-lang-key="nav_history">📜 香港攀岩史</a>
+    </div>
+  </div>
+  <div class="site-title" data-lang-key="nav_gear">🪢 裝備介紹</div>
+  <div class="lang-switch" id="langToggle">中 / EN</div>
+</header>
+
+<div class="scroll-container">
+  <!-- 第一頁：裝備分類 -->
+  <section class="section" id="page1">
+    <div class="section-content">
+      <h2 class="section-title" data-lang-key="page1_title">裝備分類</h2>
+      <p class="section-desc" data-lang-key="page1_desc">選擇一個裝備分類以查看推薦產品</p>
+      <div class="grid" id="catGrid"></div>
+    </div>
+  </section>
+
+  <!-- 第二頁：產品列表 -->
+  <section class="section" id="page2">
+    <div class="section-content">
+      <h2 class="section-title" id="page2Title" data-lang-key="page2_title">推薦產品</h2>
+      <div id="productListArea"></div>
+    </div>
+  </section>
+
+  <!-- 第三頁：產品詳情 -->
+  <section class="section" id="page3">
+    <div class="section-content">
+      <h2 class="section-title" data-lang-key="page3_title">產品詳情</h2>
+      <div id="productDetailArea"></div>
+    </div>
+  </section>
+</div>
+
+<script>
+  (function(){
+    "use strict";
+
+    // 多語言字體設定
+    const langDict = {
+      zh: {
+        nav_home: "🏔️ 主頁", nav_map: "🗺️ 攀岩地圖", nav_intro: "🧗 入門分類", nav_gear: "🪢 裝備介紹", nav_history: "📜 香港攀岩史",
+        page1_title: "裝備分類", page1_desc: "選擇一個裝備分類以查看推薦產品",
+        page2_title: "推薦產品", page2_empty: "請先在上方選擇裝備分類",
+        page3_title: "產品詳情", page3_empty: "請先在上方選擇產品",
+        btn_back: "← 返回列表", img_ph: "產品圖片準備中"
+      },
+      en: {
+        nav_home: "🏔️ Home", nav_map: "🗺️ Map", nav_intro: "🧗 Categories", nav_gear: "🪢 Gear", nav_history: "📜 History",
+        page1_title: "Gear Categories", page1_desc: "Select a category to view recommended products",
+        page2_title: "Recommended Products", page2_empty: "Please select a category above",
+        page3_title: "Product Detail", page3_empty: "Please select a product above",
+        btn_back: "← Back to List", img_ph: "Image coming soon"
+      }
+    };
+
+    // 裝備資料庫
+    const gearData = {
+      helmet: {
+        icon: "⛑️", zh: "頭盔", en: "Helmet",
+        products:[
+          { brand: "Black Diamond", model: "Vision MIPS", desc: { zh: "全能型頭盔，配備MIPS多向衝擊防護系統，在輕量化、舒適度、保護性和通風性之間取得絕佳平衡，是市場上的頂尖之選。", en: "All-around helmet equipped with MIPS technology, offering a perfect balance of lightweight, comfort, protection, and ventilation. A top choice." } },
+          { brand: "Black Diamond", model: "Vapor", desc: { zh: "超輕量設計，重量僅約245克，幾乎讓佩戴者感受不到負擔，非常適合長時間的多段攀登。", en: "Ultra-lightweight design at approx. 245g. Almost unnoticeable when worn, perfect for long multi-pitch climbs." } },
+          { brand: "Black Diamond", model: "Capitan", desc: { zh: "堅固耐用的現代頭盔，以實惠的價格提供出色的性價比，非常適合新手或預算有限的攀岩者。", en: "Highly durable modern helmet offering great value, perfect for beginners or climbers on a budget." } },
+          { brand: "Petzl", model: "Sirocco", desc: { zh: "極致輕量化的代表，通風設計出色，是許多追求輕量化的運動攀岩者和阿爾卑斯式攀登者的首選。", en: "Extremely lightweight with great ventilation. Top choice for sport and alpine climbers seeking weight reduction." } },
+          { brand: "Petzl", model: "Meteor", desc: { zh: "全能型輕量頭盔，重量約290克，在輕量、保護和透氣性之間取得很好的平衡，適用範圍廣泛。", en: "Versatile lightweight helmet (approx. 290g) with a good balance of protection and breathability for wide application." } },
+          { brand: "Petzl", model: "Boreo", desc: { zh: "入門級高性價比選擇，調節系統簡單，價格合理，非常適合室內攀岩或新手使用。", en: "Entry-level, high-value choice with simple adjustment and reasonable price. Perfect for indoor use or beginners." } },
+          { brand: "Mammut", model: "Wall Rider 2.0 MIPS Twiceme", desc: { zh: "整合了MIPS腦部防護與Twiceme智慧安全技術的創新頭盔，可儲存醫療資訊，重量僅205-225克，獲2025年ISPO大獎。", en: "Innovative helmet with MIPS and Twiceme smart tech (stores medical info), 205-225g, ISPO Award 2025 winner." } },
+          { brand: "Mammut", model: "Crag Sender", desc: { zh: "專為攀岩、攀冰、登山設計，採用EPS+聚碳酸酯外殼，重量僅275克，透氣性佳，佩戴舒適。", en: "Designed for rock, ice, and alpine climbing. Features EPS+Polycarbonate shell, lightweight at 275g, breathable and comfortable." } },
+          { brand: "Mammut", model: "Skywalker 3.0", desc: { zh: "經典耐用的入門級頭盔，提供可靠的防護，適合新手和岩館使用。", en: "Classic, durable entry-level helmet offering reliable protection. Suitable for beginners and gym use." } }
+        ]
+      },
+      shoes: {
+        icon: "👟", zh: "攀岩鞋", en: "Climbing Shoes",
+        products:[
+          { brand: "La Sportiva", model: "Solution", desc: { zh: "高性能攀岩鞋的代表，以其卓越的腳尖精準度和強大的勾腳能力聞名，深受抱石和難度攀岩者喜愛。", en: "High-performance shoe known for toe precision and heel hooking. Deeply loved by boulderers and sport climbers." } },
+          { brand: "La Sportiva", model: "Tarantula / Tarantulace", desc: { zh: "最受歡迎的入門級攀岩鞋之一，穿著舒適，價格親民，非常適合新手建立基礎。", en: "One of the most popular entry-level shoes. Comfortable and affordable, perfect for building foundational skills." } },
+          { brand: "La Sportiva", model: "TC Pro", desc: { zh: "專為傳統攀岩和多段攀登設計，鞋底較硬，提供極佳的支撐性和長時間攀爬的舒適度。", en: "Designed for trad and multi-pitch climbing. Stiff sole offers excellent support and all-day comfort." } },
+          { brand: "Scarpa", model: "Drago", desc: { zh: "極度柔軟、敏感度極高的攀岩鞋，專為高難度抱石和陡峭路線設計，能提供絕佳的腳感。", en: "Extremely soft and sensitive shoe designed for hard bouldering and steep routes, providing an incredible feel." } },
+          { brand: "Scarpa", model: "Instinct VSR / Lace", desc: { zh: "全能型性能款，VSR適合室內抱石，Lace則以繫帶設計提供更精準的貼合度，適合運動攀登。", en: "All-around performance. VSR for bouldering, Lace offers a precise fit for sport climbing." } },
+          { brand: "Scarpa", model: "Helix", desc: { zh: "義大利製造的優質入門鞋，採用Vibram XS Edge橡膠和耐用皮革鞋面，提供舒適且精準的貼合感。", en: "High-quality Italian beginner shoe with Vibram XS Edge rubber and leather upper for a comfortable fit." } },
+          { brand: "Evolv", model: "Endeavor 2.0", desc: { zh: "被多家媒體評為最佳入門級攀岩鞋之一，創新的三叉織帶系統和微不對稱鞋頭提供了舒適性和精準抓握感。", en: "Rated as a top entry-level shoe. Innovative three-strap system and slight asymmetry offer comfort and precision." } },
+          { brand: "Evolv", model: "Rave", desc: { zh: "一款魔鬼氈設計的入門級攀岩鞋，相較於傳統的懶人鞋，提供了更貼合的腳跟設計，適合新手。", en: "Velcro entry-level shoe with an improved heel fit compared to traditional slip-ons. Great for beginners." } }
+        ]
+      },
+      harness: {
+        icon: "🧗", zh: "安全吊帶", en: "Harness",
+        products:[
+          { brand: "Black Diamond", model: "Solution Guide", desc: { zh: "2025年最佳全能型安全吊帶，舒適的髖部支撐和出色的耐用性，無論是運動攀登、傳統攀登或多段路線都能勝任。", en: "Best all-around harness of 2025. Comfortable hip support and durability for sport, trad, or multi-pitch." } },
+          { brand: "Black Diamond", model: "Momentum", desc: { zh: "價格親民、調節簡單的入門款，帶有加厚襯墊，適合室內外多種場景，是新手建立信心的好選擇。", en: "Affordable, easy-to-adjust entry model with thick padding. Great for indoors and outdoors, perfect for beginners." } },
+          { brand: "Petzl", model: "Corax LT", desc: { zh: "以其快速的調節系統和出色的通風性能，成為多段攀登和全用途的熱門選擇。", en: "Quick adjustment system and great ventilation make it a popular choice for multi-pitch and all-purpose climbing." } },
+          { brand: "Petzl", model: "Luna", desc: { zh: "專為女性設計的款式，在舒適度和貼合度上進行了優化，被評為2025年最佳女性安全吊帶。", en: "Women's specific design optimized for comfort and fit. Rated best women's harness in 2025." } },
+          { brand: "Petzl", model: "Avatar", desc: { zh: "以其通風網眼設計脫穎而出，重量僅480克，非常適合長時間攀登，可保持身體乾爽。", en: "Stands out with ventilated mesh design. Lightweight (480g), keeps you dry during long climbs." } },
+          { brand: "Arc'teryx", model: "FL-365", desc: { zh: "追求極致輕量的阿爾卑斯式攀登愛好者的首選，以驚人的重量控制和耐磨性能佔據優勢。", en: "Top choice for alpinists seeking extreme lightness, featuring amazing weight control and abrasion resistance." } },
+          { brand: "Mammut", model: "Sender", desc: { zh: "專為高難度「Project」路線設計，輕量化且舒適，讓你在反覆嘗試難關時減少束縛感。", en: "Designed for hard projecting. Lightweight and comfortable, reducing restriction during repeated attempts." } }
+        ]
+      },
+      belay: {
+        icon: "⚓", zh: "確保器", en: "Belay Device",
+        products:[
+          { brand: "Petzl", model: "GriGri", desc: { zh: "最經典的輔助制動確保器，操作順暢、制動可靠，是許多經驗豐富攀岩者的首選，也是確保器界的黃金標準。", en: "Classic assisted-braking device. Smooth and reliable, the gold standard for experienced climbers." } },
+          { brand: "Petzl", model: "GriGri+", desc: { zh: "GriGri的升級版，增加了「防驚慌手柄」和頂繩/先鋒模式切換功能，對新手和教學環境更友好、更安全。", en: "Upgraded GriGri with an anti-panic handle and top-rope/lead modes. Safer and more beginner-friendly." } },
+          { brand: "Petzl", model: "Neox", desc: { zh: "新一代輔助制動確保器，以極其順暢的給繩能力為特色，非常適合快節奏的先鋒攀登，能有效避免短繩問題。", en: "Next-gen assisted-braking. Extremely smooth slack feeding, perfect for fast-paced lead climbing." } },
+          { brand: "Black Diamond", model: "ATC-XP", desc: { zh: "最經典的管狀確保/下降器，經濟實惠、簡單可靠，適用範圍廣，是入門和預算有限的好選擇。", en: "Classic tubular device. Affordable, simple, and reliable for a wide range of uses. Great for beginners." } },
+          { brand: "Black Diamond", model: "ATC-Guide", desc: { zh: "ATC系列的多用途版本，增加了在多段攀登中從上方確保的能力，是傳統攀岩和多段路線的理想夥伴。", en: "Multi-purpose ATC capable of belaying from above. Ideal companion for trad and multi-pitch routes." } },
+          { brand: "Mammut", model: "Assist", desc: { zh: "2025年ISPO大獎得主，專為解決確保者與攀登者體重差異過大的問題而設計，能有效減少確保者被拉起的風險，最多可補償45公斤的體重差。", en: "ISPO Award 2025 winner. Compensates for weight differences up to 45kg, reducing the risk of the belayer being pulled up." } }
+        ]
+      },
+      gloves: {
+        icon: "🧤", zh: "手套", en: "Gloves",
+        products:[
+          { brand: "Black Diamond", model: "Crag / 全指戶外手套", desc: { zh: "多功能全指手套，適用於攀岩、滑雪、騎行等多種戶外場景，採用透氣耐磨材質，兼顧保暖與靈活度。", en: "Versatile full-finger glove for climbing and outdoors. Breathable, durable, balancing warmth and flexibility." } },
+          { brand: "Outdoor Research", model: "Splitter II", desc: { zh: "專為裂隙攀登設計的專業手套，手背和指關節處有耐磨保護層，能有效減少長時間塞手攀登時的疲勞感。", en: "Pro glove for crack climbing. Abrasion protection on knuckles reduces fatigue during jamming." } },
+          { brand: "Simond", model: "攀岩手套 (Climbing Glove)", desc: { zh: "迪卡儂旗下品牌，性價比極高，採用山羊皮掌面提供耐磨性，手背為透氣彈性面料，非常適合入門者使用。", en: "Decathlon brand with high value. Goat leather palm and breathable back, perfect for beginners." } },
+          { brand: "Hestra", model: "Climbers Duratan Short", desc: { zh: "來自瑞典的專業手套品牌，這款半指手套專為攀登設計，在耐用性和抓握力之間取得了很好的平衡，適合春秋季使用。", en: "Swedish pro brand. This half-finger glove is designed for climbing, balancing durability and grip perfectly." } }
+        ]
+      },
+      rope: {
+        icon: "🪢", zh: "主繩", en: "Rope",
+        products:[
+          { brand: "Mammut", model: "9.5 Crag Classic", desc: { zh: "被評為2025年最佳全能主繩，極其耐用、手感極佳，無論在岩館、戶外岩場或多段路線都有出色表現。", en: "Rated best all-around rope 2025. Highly durable with great handling for gym, crag, or multi-pitch." } },
+          { brand: "Mammut", model: "Infinity 9.5 / 9.8", desc: { zh: "高性能主繩，手感順滑，耐用性強，適合運動和傳統攀登，是許多攀岩者的首選。", en: "High-performance rope, smooth handling, and durable. Top choice for sport and trad climbing." } },
+          { brand: "Edelrid", model: "Boa Eco 9.8", desc: { zh: "2025年最佳先鋒攀登繩，環保生產，9.8mm的直徑在耐用性和重量之間取得了絕佳平衡。", en: "Best lead rope 2025, eco-friendly. The 9.8mm diameter strikes a great balance between durability and weight." } },
+          { brand: "Edelrid", model: "Tommy Caldwell Eco Dry 9.3", desc: { zh: "9.3mm的雙色繩，採用環保乾式處理，輕量化且適合多種攀登環境，尤其適合多段和傳統攀登。", en: "9.3mm bi-pattern rope with eco dry treatment. Lightweight, especially great for multi-pitch and trad." } },
+          { brand: "Sterling", model: "Velocity Xeros 9.8", desc: { zh: "被譽為「耐操的工作馬」，以極高的耐用性著稱，非常適合頻繁使用或在粗獷的岩壁上攀登。", en: "The 'workhorse' known for extreme durability. Perfect for heavy use or climbing on rough rock." } },
+          { brand: "Singing Rock", model: "GYM 9.8", desc: { zh: "專為岩館和攀岩學校設計的耐用型主繩，經過8次極限墜落測試，耐磨且順滑，是岩館訓練的理想選擇。", en: "Durable rope designed for gyms and schools. Survived 8 extreme fall tests, ideal for indoor training." } }
+        ]
+      }
+    };
+
+    let currentLang = localStorage.getItem('climb_lang') || 'zh';
+    let activeCat = null;
+    let activeProdIdx = null;
+
+    // DOM Elements
+    const catGrid = document.getElementById('catGrid');
+    const productListArea = document.getElementById('productListArea');
+    const productDetailArea = document.getElementById('productDetailArea');
+    const page2Title = document.getElementById('page2Title');
+    const langToggle = document.getElementById('langToggle');
+
+    // 1. 初始化頁面一 (類別網格)
+    function renderCategories() {
+      catGrid.innerHTML = '';
+      for (const [key, data] of Object.entries(gearData)) {
+        const div = document.createElement('div');
+        div.className = `card ${activeCat === key ? 'active' : ''}`;
+        div.innerHTML = `<div class="icon">${data.icon}</div><h3>${data[currentLang]}</h3>`;
+        div.onclick = () => selectCategory(key);
+        catGrid.appendChild(div);
+      }
+    }
+
+    // 2. 選擇類別 -> 跳轉頁面二
+    function selectCategory(key) {
+      activeCat = key;
+      activeProdIdx = null; // 重置產品選擇
+      renderCategories(); // 更新 active 狀態
+      renderProductList();
+      renderProductDetail(); // 清空或顯示預設訊息
+      document.getElementById('page2').scrollIntoView({ behavior: 'smooth' });
+      // 更新 URL
+      window.history.replaceState({}, '', `?type=${key}`);
+    }
+
+    // 渲染頁面二 (產品列表)
+    function renderProductList() {
+      if (!activeCat) {
+        productListArea.innerHTML = `<div class="empty-msg">${langDict[currentLang].page2_empty}</div>`;
+        page2Title.textContent = langDict[currentLang].page2_title;
+        return;
+      }
+      
+      const data = gearData[activeCat];
+      page2Title.textContent = `${data.icon} ${data[currentLang]}`;
+      
+      let html = `<div class="grid">`;
+      data.products.forEach((prod, idx) => {
+        html += `
+          <div class="product-card" onclick="selectProduct(${idx})">
+            <div class="brand">${prod.brand}</div>
+            <div class="model">${prod.model}</div>
+          </div>
+        `;
+      });
+      html += `</div>`;
+      productListArea.innerHTML = html;
+    }
+
+    // 3. 選擇產品 -> 跳轉頁面三
+    window.selectProduct = function(idx) {
+      activeProdIdx = idx;
+      renderProductDetail();
+      document.getElementById('page3').scrollIntoView({ behavior: 'smooth' });
+    };
+
+    // 渲染頁面三 (產品詳情)
+    function renderProductDetail() {
+      if (!activeCat || activeProdIdx === null) {
+        productDetailArea.innerHTML = `<div class="empty-msg">${langDict[currentLang].page3_empty}</div>`;
+        return;
+      }
+      
+      const prod = gearData[activeCat].products[activeProdIdx];
+      const icon = gearData[activeCat].icon;
+      const backText = langDict[currentLang].btn_back;
+      const imgPhText = langDict[currentLang].img_ph;
+
+      productDetailArea.innerHTML = `
+        <div class="detail-view">
+          <div class="detail-image">
+            <div class="img-placeholder">
+              <div class="icon">${icon}</div>
+              <div>${imgPhText}</div>
+            </div>
+          </div>
+          <div class="detail-info">
+            <div class="brand">${prod.brand}</div>
+            <div class="model">${prod.model}</div>
+            <div class="desc">${prod.desc[currentLang]}</div>
+            <button class="btn-back" onclick="document.getElementById('page2').scrollIntoView({ behavior: 'smooth' })">
+              ${backText}
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    // 語言切換
+    function applyLanguage(lang) {
+      currentLang = lang;
+      document.querySelectorAll('[data-lang-key]').forEach(el => {
+        const key = el.getAttribute('data-lang-key');
+        if (langDict[lang] && langDict[lang][key]) { el.textContent = langDict[lang][key]; }
+      });
+      renderCategories();
+      renderProductList();
+      renderProductDetail();
+    }
+
+    langToggle.addEventListener('click', () => {
+      const newLang = currentLang === 'zh' ? 'en' : 'zh';
+      localStorage.setItem('climb_lang', newLang);
+      applyLanguage(newLang);
+      langToggle.textContent = newLang === 'zh' ? '中 / EN' : 'EN / 中';
+    });
+
+    // 下拉選單邏輯
+    const menuToggle = document.getElementById('menuToggle');
+    const navDropdown = document.getElementById('navDropdown');
+    menuToggle.addEventListener('click', (e) => { e.stopPropagation(); navDropdown.classList.toggle('active'); });
+    document.addEventListener('click', (e) => { if (!menuToggle.contains(e.target) && !navDropdown.contains(e.target)) navDropdown.classList.remove('active'); });
+
+    // 初始化啟動
+    applyLanguage(currentLang);
+    langToggle.textContent = currentLang === 'zh' ? '中 / EN' : 'EN / 中';
+
+    // 檢查 URL 參數以自動跳轉
+    const urlParams = new URLSearchParams(window.location.search);
+    const typeParam = urlParams.get('type');
+    if (typeParam && gearData[typeParam]) {
+      // 若 URL 帶有參數，稍微延遲讓 DOM 渲染完成後平滑滾動
+      setTimeout(() => { selectCategory(typeParam); }, 100);
+    }
+
+  })();
+</script>
+</body>
+</html>

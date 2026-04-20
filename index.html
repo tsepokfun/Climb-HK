@@ -5,12 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>攀 · 香港</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
     body {
       background-color: black;
       color: white;
@@ -20,405 +16,148 @@
 
     /* 頂欄 */
     .top-bar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 64px;
-      background-color: black;
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 24px;
-      z-index: 100;
-      border-bottom: 1px solid #333;
+      position: fixed; top: 0; left: 0; width: 100%; height: 64px;
+      background-color: black; color: white; display: flex;
+      align-items: center; justify-content: space-between;
+      padding: 0 24px; z-index: 100; border-bottom: 1px solid #333;
     }
-
-    .menu-area {
-      position: relative;
-    }
-
+    .menu-area { position: relative; }
     .menu-dots {
-      font-size: 28px;
-      line-height: 1;
-      cursor: pointer;
-      letter-spacing: 2px;
-      user-select: none;
-      padding: 8px 0;
+      font-size: 28px; line-height: 1; cursor: pointer;
+      letter-spacing: 2px; user-select: none; padding: 8px 0; color: white;
     }
-
     .nav-dropdown {
-      position: absolute;
-      top: 50px;
-      left: -10px;
-      background: rgba(20, 20, 20, 0.95);
-      backdrop-filter: blur(8px);
-      border: 1px solid #555;
-      border-radius: 12px;
-      padding: 12px 0;
-      min-width: 180px;
-      display: none;
-      flex-direction: column;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.6);
-      z-index: 120;
+      position: absolute; top: 50px; left: -10px;
+      background: rgba(20, 20, 20, 0.95); backdrop-filter: blur(8px);
+      border: 1px solid #555; border-radius: 12px; padding: 12px 0;
+      min-width: 180px; display: none; flex-direction: column;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.6); z-index: 120;
     }
-
-    .nav-dropdown.active {
-      display: flex;
-    }
-
+    .nav-dropdown.active { display: flex; }
     .nav-item {
-      padding: 12px 24px;
-      color: #f0f0e0;
-      font-size: 1.1rem;
-      cursor: pointer;
-      transition: background 0.2s;
-      white-space: nowrap;
+      padding: 12px 24px; color: #f0f0e0; font-size: 1.1rem; text-decoration: none;
+      cursor: pointer; transition: background 0.2s; white-space: nowrap;
     }
-
-    .nav-item:hover {
-      background: #3a5a3a;
-      color: white;
-    }
-
-    .site-title {
-      font-weight: 600;
-      font-size: 1.4rem;
-      letter-spacing: 2px;
-    }
-
+    .nav-item:hover { background: #3a5a3a; color: white; }
+    .site-title { font-weight: 600; font-size: 1.4rem; letter-spacing: 2px; }
     .lang-switch {
-      background: #2a2a2a;
-      color: #ddd;
-      border: 1px solid #777;
-      padding: 6px 14px;
-      border-radius: 30px;
-      font-size: 1rem;
-      font-weight: bold;
-      cursor: pointer;
-      transition: 0.2s;
-      user-select: none;
+      background: #2a2a2a; color: #ddd; border: 1px solid #777;
+      padding: 6px 14px; border-radius: 30px; font-size: 1rem;
+      font-weight: bold; cursor: pointer; transition: 0.2s; user-select: none;
     }
-
-    .lang-switch:hover {
-      background: #4a6a4a;
-      color: white;
-      border-color: #aaa;
-    }
+    .lang-switch:hover { background: #4a6a4a; color: white; border-color: #aaa; }
 
     /* 繩索進度條 */
     .rope-progress {
-      position: fixed;
-      right: 20px;
-      top: 100px;
-      bottom: 100px;
-      width: 12px;
-      z-index: 90;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      pointer-events: none;
+      position: fixed; right: 20px; top: 100px; bottom: 100px;
+      width: 12px; z-index: 90; display: flex; flex-direction: column;
+      align-items: center; pointer-events: none;
     }
-
     .rope-line {
-      width: 4px;
-      height: 100%;
-      background: repeating-linear-gradient(
-        45deg,
-        #b98c5f,
-        #b98c5f 6px,
-        #8b6914 6px,
-        #8b6914 12px
-      );
-      border-radius: 4px;
-      box-shadow: 0 0 6px rgba(0,0,0,0.5);
-      position: relative;
+      width: 4px; height: 100%;
+      background: repeating-linear-gradient(45deg, #b98c5f, #b98c5f 6px, #8b6914 6px, #8b6914 12px);
+      border-radius: 4px; box-shadow: 0 0 6px rgba(0,0,0,0.5); position: relative;
     }
-
     .climber-icon {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 28px;
-      height: 28px;
-      background-color: #d94f4f;
-      border-radius: 45% 45% 40% 40%;
-      box-shadow: 0 2px 6px black;
-      border: 2px solid #f0c0a0;
-      transition: top 0.05s linear;
-      pointer-events: none;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      position: absolute; left: 50%; transform: translateX(-50%);
+      width: 28px; height: 28px; background-color: #d94f4f;
+      border-radius: 45% 45% 40% 40%; box-shadow: 0 2px 6px black;
+      border: 2px solid #f0c0a0; transition: top 0.05s linear;
+      pointer-events: none; display: flex; align-items: center; justify-content: center;
     }
-
-    .climber-icon::after {
-      content: "🧗";
-      font-size: 16px;
-      line-height: 1;
-      filter: drop-shadow(0 1px 1px black);
-    }
+    .climber-icon::after { content: "🧗"; font-size: 16px; line-height: 1; filter: drop-shadow(0 1px 1px black); }
 
     /* 滾動容器 */
-    .scroll-container {
-      position: relative;
-      z-index: 1;
-    }
-
+    .scroll-container { position: relative; z-index: 1; }
     .section {
-      min-height: 100vh;
-      width: 100%;
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 80px 5% 60px;
-      scroll-snap-align: start;
-      transition: opacity 0.3s ease;
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      background-attachment: fixed;
+      min-height: 100vh; width: 100%; position: relative;
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; padding: 80px 5% 60px;
+      scroll-snap-align: start; transition: opacity 0.3s ease;
+      background-size: cover; background-position: center;
+      background-repeat: no-repeat; background-attachment: fixed;
     }
-
     .hero-section {
       background-image: url('image/LionM.jpg');
-      background-size: cover;
-      background-position: center 30%;
-      position: relative;
+      background-size: cover; background-position: center 30%; position: relative;
     }
-
     .hero-section::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: rgba(255, 255, 255, 0.4);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      z-index: 0;
+      content: ""; position: absolute; inset: 0;
+      background: rgba(255, 255, 255, 0.4); backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px); z-index: 0;
     }
-
     .bg-climb-route {
       background-image: url('image/ClimbingRoute.png');
-      background-size: cover;
-      background-position: 30% 20%;
-      background-attachment: fixed;
-      position: relative;
+      background-size: cover; background-position: 30% 20%;
+      background-attachment: fixed; position: relative;
     }
-
     .bg-climb-route::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: rgba(255, 255, 255, 0.25);
-      backdrop-filter: blur(2px);
-      -webkit-backdrop-filter: blur(2px);
-      pointer-events: none;
-      z-index: 0;
+      content: ""; position: absolute; inset: 0;
+      background: rgba(255, 255, 255, 0.25); backdrop-filter: blur(2px);
+      -webkit-backdrop-filter: blur(2px); pointer-events: none; z-index: 0;
     }
-
-    .section > * {
-      position: relative;
-      z-index: 2;
-    }
+    .section > * { position: relative; z-index: 2; }
 
     /* 主頁標題圖片 */
-    .hero-title {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 30px;
-      width: 100%;
-      flex-wrap: wrap;
-    }
-
-    .hero-img-pan {
-      height: auto;
-      width: 35vw;
-      max-width: 400px;
-      min-width: 200px;
-      filter: drop-shadow(8px 8px 12px rgba(20,40,10,0.5));
-    }
-
-    .hero-img-hk {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      writing-mode: vertical-rl;
-      text-orientation: upright;
-    }
-
-    .hero-img-hk img {
-      width: 15vw;
-      max-width: 160px;
-      min-width: 80px;
-      filter: drop-shadow(6px 6px 8px rgba(0,30,0,0.4));
-    }
-
+    .hero-title { display: flex; align-items: center; justify-content: center; gap: 30px; width: 100%; flex-wrap: wrap; }
+    .hero-img-pan { height: auto; width: 35vw; max-width: 400px; min-width: 200px; filter: drop-shadow(8px 8px 12px rgba(20,40,10,0.5)); }
+    .hero-img-hk { display: flex; flex-direction: column; align-items: center; writing-mode: vertical-rl; text-orientation: upright; }
+    .hero-img-hk img { width: 15vw; max-width: 160px; min-width: 80px; filter: drop-shadow(6px 6px 8px rgba(0,30,0,0.4)); }
     .scroll-hint {
-      position: absolute;
-      bottom: 40px;
-      left: 50%;
-      transform: translateX(-50%);
-      color: #aaa;
-      font-size: 1.2rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      opacity: 0.8;
-      transition: opacity 0.3s;
-      z-index: 10;
+      position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+      color: #aaa; font-size: 1.2rem; display: flex; flex-direction: column;
+      align-items: center; opacity: 0.8; transition: opacity 0.3s; z-index: 10;
     }
-
-    .scroll-hint span {
-      font-size: 2rem;
-      line-height: 1;
-    }
+    .scroll-hint span { font-size: 2rem; line-height: 1; }
 
     .map-container {
-      width: 90%;
-      max-width: 1000px;
-      background: rgba(10,20,15,0.3);
-      backdrop-filter: blur(4px);
-      padding: 20px;
-      border-radius: 28px;
-      cursor: pointer;
-      box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+      width: 90%; max-width: 1000px; background: rgba(10,20,15,0.3);
+      backdrop-filter: blur(4px); padding: 20px; border-radius: 28px;
+      cursor: pointer; box-shadow: 0 10px 20px rgba(0,0,0,0.3);
     }
+    .map-container:hover { transform: scale(1.01); }
 
-    .map-container:hover {
-      transform: scale(1.01);
-    }
-
-    canvas#hkMap {
-      width: 100%;
-      height: auto;
-      background: transparent;
-      border-radius: 16px;
-    }
-
-    .intro-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 24px;
-      max-width: 1000px;
-      width: 100%;
-    }
-
+    .intro-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; max-width: 1000px; width: 100%; }
     .intro-card {
-      aspect-ratio: 4 / 3;
-      border-radius: 32px;
-      background-size: cover;
-      background-position: center;
-      cursor: pointer;
-      transition: 0.2s;
-      box-shadow: 0 8px 18px black;
-      display: flex;
-      align-items: flex-end;
-      justify-content: center;
-      padding-bottom: 20px;
-      font-size: 2rem;
-      font-weight: bold;
-      color: white;
-      text-shadow: 2px 2px 8px black;
-      border: 2px solid rgba(255,255,240,0.3);
-      position: relative;
-      overflow: hidden;
+      aspect-ratio: 4 / 3; border-radius: 32px; background-size: cover;
+      background-position: center; cursor: pointer; transition: 0.2s;
+      box-shadow: 0 8px 18px black; display: flex; align-items: flex-end;
+      justify-content: center; padding-bottom: 20px; font-size: 2rem;
+      font-weight: bold; color: white; text-shadow: 2px 2px 8px black;
+      border: 2px solid rgba(255,255,240,0.3); position: relative; overflow: hidden;
     }
-
     .intro-card::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(to top, rgba(0,0,0,0.5), transparent);
-      z-index: 1;
+      content: ""; position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.5), transparent); z-index: 1;
     }
-
     .intro-card span {
-      position: relative;
-      z-index: 2;
-      backdrop-filter: blur(2px);
-      padding: 4px 16px;
-      border-radius: 40px;
-      background: rgba(20,30,20,0.5);
+      position: relative; z-index: 2; backdrop-filter: blur(2px);
+      padding: 4px 16px; border-radius: 40px; background: rgba(20,30,20,0.5);
     }
+    .intro-card:hover { transform: scale(1.02); border-color: #b0b080; }
 
-    .intro-card:hover {
-      transform: scale(1.02);
-      border-color: #b0b080;
-    }
-
-    .gear-wrapper {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      width: 100%;
-    }
-
+    .gear-wrapper { display: flex; flex-direction: column; align-items: center; width: 100%; }
     .gear-canvas-box {
-      background: rgba(30,40,30,0.4);
-      backdrop-filter: blur(4px);
-      padding: 20px;
-      border-radius: 40px;
-      display: inline-block;
-      width: 100%;
-      max-width: 1000px;
+      background: rgba(30,40,30,0.4); backdrop-filter: blur(4px);
+      padding: 20px; border-radius: 40px; display: inline-block;
+      width: 100%; max-width: 1000px;
     }
-
     canvas#gearCanvas {
-      display: block;
-      width: 100%;
-      height: auto;
-      border-radius: 24px;
-      cursor: pointer;
-      transition: transform 0.15s ease-out;
-      will-change: transform;
+      display: block; width: 100%; height: auto; border-radius: 24px;
+      cursor: pointer; transition: transform 0.15s ease-out; will-change: transform;
     }
+    .gear-hint { margin-top: 16px; color: #ccc; }
 
-    .gear-hint {
-      margin-top: 16px;
-      color: #ccc;
-    }
-
-    .history-section {
-      cursor: pointer;
-    }
-
+    .history-section { cursor: pointer; }
     .history-placeholder {
-      font-size: 3rem;
-      font-weight: 300;
-      border: 2px dashed #b0b0a0;
-      padding: 30px 60px;
-      background: rgba(20,20,10,0.5);
-      backdrop-filter: blur(6px);
-    }
-
-    .footer-bar {
-      background: black;
-      color: #aaa;
-      padding: 24px 10%;
+      font-size: 3rem; font-weight: 300; border: 2px dashed #b0b0a0;
+      padding: 30px 60px; background: rgba(20,20,10,0.5); backdrop-filter: blur(6px);
       text-align: center;
-      font-size: 0.9rem;
-      border-top: 1px solid #3a3a3a;
     }
-
-    .footer-bar a {
-      color: #ccc;
-      text-decoration: none;
-      margin: 0 12px;
-    }
-
-    .fade-section {
-      transition: opacity 0.4s;
-    }
-
-    .section-title {
-      font-size: 2.8rem;
-      margin-bottom: 32px;
-      text-shadow: 2px 2px 8px black;
-    }
+    .footer-bar { background: black; color: #aaa; padding: 24px 10%; text-align: center; font-size: 0.9rem; border-top: 1px solid #3a3a3a; }
+    .footer-bar a { color: #ccc; text-decoration: none; margin: 0 12px; }
+    .fade-section { transition: opacity 0.4s; }
+    .section-title { font-size: 2.8rem; margin-bottom: 32px; text-shadow: 2px 2px 8px black; }
 
     @media (max-width: 600px) {
       .intro-grid { grid-template-columns: 1fr; }
@@ -430,33 +169,28 @@
 </head>
 <body>
 
-<!-- 固定頂欄 -->
 <header class="top-bar">
   <div class="menu-area">
     <div class="menu-dots" id="menuToggle">⋯</div>
     <div class="nav-dropdown" id="navDropdown">
-      <div class="nav-item" data-target="section1" data-lang-key="nav_home">🏔️ 主頁</div>
-      <div class="nav-item" data-target="sectionMap" data-lang-key="nav_map">🗺️ 攀岩地圖</div>
-      <div class="nav-item" data-target="sectionIntro" data-lang-key="nav_intro">🧗 入門分類</div>
-      <div class="nav-item" data-target="sectionGear" data-lang-key="nav_gear">🪢 裝備介紹</div>
-      <div class="nav-item" data-target="sectionHistory" data-lang-key="nav_history">📜 香港攀岩史</div>
+      <a href="#section1" class="nav-item" data-lang-key="nav_home">🏔️ 主頁</a>
+      <a href="Map/map.html" class="nav-item" data-lang-key="nav_map">🗺️ 攀岩地圖</a>
+      <a href="#sectionIntro" class="nav-item" data-lang-key="nav_intro">🧗 入門分類</a>
+      <a href="#sectionGear" class="nav-item" data-lang-key="nav_gear">🪢 裝備介紹</a>
+      <a href="history/history.html" class="nav-item" data-lang-key="nav_history">📜 香港攀岩史</a>
     </div>
   </div>
   <div class="site-title" data-lang-key="site_title">香港攀岩</div>
   <div class="lang-switch" id="langToggle">中 / EN</div>
 </header>
 
-<!-- 繩索進度條 -->
 <div class="rope-progress">
   <div class="rope-line" id="ropeLine">
     <div class="climber-icon" id="climberIcon" style="top: 0%;"></div>
   </div>
 </div>
 
-<!-- 主內容 -->
 <div class="scroll-container">
-
-  <!-- 第一頁 HERO -->
   <section class="section hero-section" id="section1">
     <div class="hero-title">
       <img src="image/Climb.png" alt="攀" class="hero-img-pan">
@@ -466,55 +200,48 @@
       </div>
     </div>
     <div class="scroll-hint" id="scrollHint">
-      <span>⌃</span>
-      <span data-lang-key="scroll_up">向上滑動</span>
+      <span>⌃</span><span data-lang-key="scroll_up">向上滑動</span>
     </div>
   </section>
 
-  <!-- 第二頁：地圖 -->
   <section class="section bg-climb-route fade-section" id="sectionMap">
     <h2 class="section-title" data-lang-key="map_title">🧗 攀石好去處</h2>
     <div class="map-container" id="mapClickArea">
-      <canvas id="hkMap" width="900" height="500"></canvas>
+      <img src="image/map.jpg" alt="HK Map" style="width: 100%; height: auto; border-radius: 16px; display: block;">
     </div>
     <p style="margin-top: 20px; opacity:0.9;" data-lang-key="map_click">點擊地圖進入搜尋頁面</p>
   </section>
 
-  <!-- 第三頁：入門分類 -->
   <section class="section bg-climb-route fade-section" id="sectionIntro">
     <h2 class="section-title" data-lang-key="intro_title">選擇你的入門路線</h2>
     <div class="intro-grid">
-      <div class="intro-card" style="background-image: url('image/AB.jpg');" data-goto="artificial-bouldering"><span data-lang-key="cat_ab">🧗‍♂️ 人工抱石</span></div>
-      <div class="intro-card" style="background-image: url('image/AC.jpg');" data-goto="artificial-climbing"><span data-lang-key="cat_ac">🧗 人工攀岩</span></div>
-      <div class="intro-card" style="background-image: url('image/NB.jpg');" data-goto="outdoor-bouldering"><span data-lang-key="cat_nb">⛰️ 戶外抱石</span></div>
-      <div class="intro-card" style="background-image: url('image/NC.jpg');" data-goto="outdoor-climbing"><span data-lang-key="cat_nc">🏔️ 戶外攀岩</span></div>
+      <div class="intro-card" style="background-image: url('image/AB.jpg');" data-goto="Path/AB.html"><span data-lang-key="cat_ab">🧗‍♂️ 人工抱石</span></div>
+      <div class="intro-card" style="background-image: url('image/AC.jpg');" data-goto="Path/AC.html"><span data-lang-key="cat_ac">🧗 人工攀岩</span></div>
+      <div class="intro-card" style="background-image: url('image/NB.jpg');" data-goto="Path/NB.html"><span data-lang-key="cat_nb">⛰️ 戶外抱石</span></div>
+      <div class="intro-card" style="background-image: url('image/NC.jpg');" data-goto="Path/NC.html"><span data-lang-key="cat_nc">🏔️ 戶外攀岩</span></div>
     </div>
   </section>
 
-  <!-- 第四頁：裝備小人 (繩索在右側，強化繪製) -->
   <section class="section bg-climb-route fade-section" id="sectionGear">
     <h2 class="section-title" data-lang-key="gear_title">攀登裝備</h2>
     <div class="gear-wrapper">
       <div class="gear-canvas-box">
-        <canvas id="gearCanvas" width="900" height="550"></canvas>
+        <canvas id="gearCanvas"></canvas>
       </div>
       <div class="gear-hint" data-lang-key="gear_click">點擊裝備或名稱查看詳情</div>
     </div>
   </section>
 
-  <!-- 第五頁：歷史 -->
   <section class="section bg-climb-route fade-section history-section" id="sectionHistory">
     <div class="history-placeholder">
       <span data-lang-key="history_main">📜 香港攀岩歷史</span><br>
       <span style="font-size: 1.2rem;" data-lang-key="history_click">(點擊進入詳細歷史)</span>
     </div>
   </section>
-
 </div>
 
-<!-- 底部黑條 -->
 <footer class="footer-bar" id="mainFooter">
-  <div>攀・香港</span>  | <a href="#">GitHub</a> | <a href="#" data-lang-key="footer_copyright">版權聲明</a> | <span data-lang-key="footer_contact">聯絡我們</span></div>
+  <div>攀・香港 | <a href="https://github.com/tsepokfun/3006">GitHub</a> | <a data-lang-key="footer_copyright">版權聲明</a> | <span data-lang-key="footer_contact">聯絡我們</span></div>
   <div style="margin-top: 10px;" data-lang-key="footer_note">網站設計・僅供攀岩愛好者參考</div>
 </footer>
 
@@ -522,107 +249,115 @@
   (function(){
     "use strict";
 
-    // ---------- 多語言字典 ----------
     const langDict = {
       zh: {
-        site_title: '香港攀岩',
-        nav_home: '🏔️ 主頁',
-        nav_map: '🗺️ 攀岩地圖',
-        nav_intro: '🧗 入門分類',
-        nav_gear: '🪢 裝備介紹',
-        nav_history: '📜 香港攀岩史',
-        scroll_up: '向上滑動',
-        map_title: '🧗 攀石好去處',
-        map_click: '點擊地圖進入搜尋頁面',
-        intro_title: '選擇你的入門路線',
-        cat_ab: '🧗‍♂️ 人工抱石',
-        cat_ac: '🧗 人工攀岩',
-        cat_nb: '⛰️ 戶外抱石',
-        cat_nc: '🏔️ 戶外攀岩',
-        gear_title: '攀登裝備',
-        gear_click: '點擊裝備或名稱查看詳情',
-        gear_rope_label: '繩索',
-        history_main: '📜 香港攀岩歷史',
-        history_click: '(點擊進入詳細歷史)',
-        footer_brand: '攀・香港',
-        footer_copyright: '版權聲明',
-        footer_contact: '聯絡我們',
-        footer_note: '網站設計・僅供攀岩愛好者參考'
+        site_title: '香港攀岩', nav_home: '🏔️ 主頁', nav_map: '🗺️ 攀岩地圖', nav_intro: '🧗 入門分類', nav_gear: '🪢 裝備介紹', nav_history: '📜 香港攀岩史',
+        scroll_up: '向上滑動', map_title: '🧗 攀石好去處', map_click: '點擊地圖進入搜尋頁面', intro_title: '選擇你的入門路線',
+        cat_ab: '🧗‍♂️ 人工抱石', cat_ac: '🧗 人工攀岩', cat_nb: '⛰️ 戶外抱石', cat_nc: '🏔️ 戶外攀岩',
+        gear_title: '攀登裝備', gear_click: '點擊裝備或名稱查看詳情', gear_rope_label: '繩索',
+        history_main: '📜 香港攀岩歷史', history_click: '(點擊進入詳細歷史)',
+        footer_brand: '攀・香港', footer_copyright: '版權聲明', footer_contact: '聯絡我們', footer_note: '網站設計・僅供攀岩愛好者參考'
       },
       en: {
-        site_title: 'HK Climbing',
-        nav_home: '🏔️ Home',
-        nav_map: '🗺️ Climbing Map',
-        nav_intro: '🧗 Categories',
-        nav_gear: '🪢 Gear',
-        nav_history: '📜 History',
-        scroll_up: 'Scroll Up',
-        map_title: '🧗 Climbing Spots',
-        map_click: 'Click map to search',
-        intro_title: 'Choose Your Path',
-        cat_ab: '🧗‍♂️ Gym Bouldering',
-        cat_ac: '🧗 Gym Climbing',
-        cat_nb: '⛰️ Outdoor Bouldering',
-        cat_nc: '🏔️ Outdoor Climbing',
-        gear_title: 'Climbing Gear',
-        gear_click: 'Click gear or label for details',
-        gear_rope_label: 'Rope',
-        history_main: '📜 HK Climbing History',
-        history_click: '(Click for detailed history)',
-        footer_brand: 'Climb HK',
-        footer_copyright: 'Copyright',
-        footer_contact: 'Contact',
-        footer_note: 'Website for climbing enthusiasts'
+        site_title: 'HK Climbing', nav_home: '🏔️ Home', nav_map: '🗺️ Climbing Map', nav_intro: '🧗 Categories', nav_gear: '🪢 Gear', nav_history: '📜 History',
+        scroll_up: 'Scroll Up', map_title: '🧗 Climbing Spots', map_click: 'Click map to search', intro_title: 'Choose Your Path',
+        cat_ab: '🧗‍♂️ Gym Bouldering', cat_ac: '🧗 Gym Climbing', cat_nb: '⛰️ Outdoor Bouldering', cat_nc: '🏔️ Outdoor Climbing',
+        gear_title: 'Climbing Gear', gear_click: 'Click gear or label for details', gear_rope_label: 'Rope',
+        history_main: '📜 HK Climbing History', history_click: '(Click for detailed history)',
+        footer_brand: 'Climb HK', footer_copyright: 'Copyright', footer_contact: 'Contact', footer_note: 'Website for climbing enthusiasts'
       }
     };
 
     let currentLang = 'zh';
 
-    function applyLanguage(lang) {
-      document.querySelectorAll('[data-lang-key]').forEach(el => {
-        const key = el.getAttribute('data-lang-key');
-        if (langDict[lang] && langDict[lang][key]) {
-          el.textContent = langDict[lang][key];
-        }
-      });
-      // 重新繪製裝備canvas (包含繩索標籤)
-      drawGearScene();
-      currentLang = lang;
-    }
+    const gearCanvas = document.getElementById('gearCanvas');
+    const gearCtx = gearCanvas.getContext('2d');
+    gearCanvas.width = 900;
+    gearCanvas.height = 550;
+    const hitRegions =[];
 
-    // 語言切換按鈕
+    const scrollHint = document.getElementById('scrollHint');
+    const climberIcon = document.getElementById('climberIcon');
     const langToggle = document.getElementById('langToggle');
-    langToggle.addEventListener('click', () => {
-      const newLang = currentLang === 'zh' ? 'en' : 'zh';
-      applyLanguage(newLang);
-      langToggle.textContent = newLang === 'zh' ? '中 / EN' : 'EN / 中';
-    });
-
-    // ---------- 導航下拉 ----------
     const menuToggle = document.getElementById('menuToggle');
     const navDropdown = document.getElementById('navDropdown');
-    menuToggle.addEventListener('click', (e) => {
-      e.stopPropagation();
-      navDropdown.classList.toggle('active');
-    });
-    document.addEventListener('click', (e) => {
-      if (!menuToggle.contains(e.target) && !navDropdown.contains(e.target)) {
-        navDropdown.classList.remove('active');
-      }
-    });
-    document.querySelectorAll('.nav-item').forEach(item => {
-      item.addEventListener('click', () => {
-        const targetId = item.dataset.target;
-        const targetEl = document.getElementById(targetId);
-        if (targetEl) targetEl.scrollIntoView({ behavior: 'smooth' });
-        navDropdown.classList.remove('active');
-      });
-    });
 
-    // ---------- 進度條 & 淡入淡出 & 裝備縮放 ----------
-    const scrollHint = document.getElementById('scrollHint');
-    const gearCanvas = document.getElementById('gearCanvas');
-    const climberIcon = document.getElementById('climberIcon');
+    function drawGearScene() {
+      gearCtx.clearRect(0, 0, gearCanvas.width, gearCanvas.height);
+      hitRegions.length = 0;
+
+      gearCtx.shadowColor = '#1a1a1a'; gearCtx.shadowBlur = 10;
+      gearCtx.fillStyle = '#b5875a'; gearCtx.fillRect(480, 20, 30, 230);
+      gearCtx.fillStyle = '#9c7a4d'; for (let i=25; i<250; i+=12) { gearCtx.fillRect(480, i, 30, 4); }
+      gearCtx.fillStyle = '#dbb07c'; gearCtx.globalAlpha = 0.5; gearCtx.fillRect(485, 20, 8, 230);
+      gearCtx.globalAlpha = 1.0; gearCtx.shadowBlur = 0;
+
+      gearCtx.fillStyle = '#f7d9aa'; gearCtx.beginPath(); gearCtx.arc(400, 75, 28, 0, 2*Math.PI); gearCtx.fill();
+      gearCtx.strokeStyle = '#6b4f2c'; gearCtx.lineWidth = 2; gearCtx.stroke();
+      
+      gearCtx.fillStyle = '#4f7a9e';
+      gearCtx.fillRect(365, 105, 70, 90); gearCtx.fillRect(315, 115, 45, 18);
+      gearCtx.fillRect(440, 115, 45, 18); gearCtx.fillRect(355, 200, 22, 65); gearCtx.fillRect(423, 200, 22, 65);
+      
+      gearCtx.fillStyle = '#d63e3e'; gearCtx.beginPath(); gearCtx.arc(400, 65, 32, Math.PI, 2*Math.PI); gearCtx.fill();
+      
+      gearCtx.fillStyle = '#b05e2e';
+      gearCtx.beginPath(); gearCtx.moveTo(345, 265); gearCtx.lineTo(375, 265); gearCtx.lineTo(382, 285); gearCtx.lineTo(338, 285); gearCtx.closePath(); gearCtx.fill();
+      gearCtx.beginPath(); gearCtx.moveTo(415, 265); gearCtx.lineTo(445, 265); gearCtx.lineTo(452, 285); gearCtx.lineTo(408, 285); gearCtx.closePath(); gearCtx.fill();
+
+      gearCtx.fillStyle = '#2e5c6b';
+      gearCtx.fillRect(345, 180, 110, 12); gearCtx.fillRect(345, 200, 18, 40); gearCtx.fillRect(437, 200, 18, 40);
+      gearCtx.fillRect(385, 180, 10, 55); gearCtx.fillRect(405, 180, 10, 55);
+      
+      gearCtx.fillStyle = '#7a8f8c'; gearCtx.beginPath(); gearCtx.arc(400, 150, 15, 0, 2*Math.PI); gearCtx.fill();
+      gearCtx.fillStyle = '#a0b0a8'; gearCtx.beginPath(); gearCtx.arc(412, 143, 12, 0, 2*Math.PI); gearCtx.fill();
+      
+      gearCtx.fillStyle = '#bd7a5a';
+      gearCtx.fillRect(295, 115, 25, 20); gearCtx.fillRect(285, 122, 14, 10);
+      gearCtx.fillRect(470, 115, 25, 20); gearCtx.fillRect(490, 122, 14, 10);
+      
+      const isEn = currentLang === 'en';
+
+      // ==========================================
+      // 【修改】將 url 指向 `gear/gear.html?type=...`
+      // ==========================================
+      const labels =[
+        { zh: '頭盔', en: 'Helmet', x: 160, y: 90, cx: 365, cy: 65, url: 'gear/gear.html?type=helmet' },
+        { zh: '攀石鞋', en: 'Shoes', x: 120, y: 270, cx: 350, cy: 270, url: 'gear/gear.html?type=shoes' },
+        { zh: '安全帶', en: 'Harness', x: 580, y: 200, cx: 455, cy: 190, url: 'gear/gear.html?type=harness' },
+        { zh: '確保器', en: 'Belay', x: 660, y: 140, cx: 425, cy: 145, url: 'gear/gear.html?type=belay' },
+        { zh: '手套', en: 'Gloves', x: 560, y: 100, cx: 480, cy: 120, url: 'gear/gear.html?type=gloves' },
+        { zh: '繩索', en: 'Rope', x: 520, y: 30, cx: 500, cy: 50, url: 'gear/gear.html?type=rope' }
+      ];
+      
+      gearCtx.font = 'bold 18px system-ui, sans-serif'; gearCtx.fillStyle = '#f5f0dc';
+      gearCtx.strokeStyle = '#cdc6a5'; gearCtx.lineWidth = 2;
+      
+      labels.forEach(item => {
+        gearCtx.beginPath(); gearCtx.moveTo(item.cx, item.cy); gearCtx.lineTo(item.x + 50, item.y - 5); gearCtx.stroke();
+        const name = isEn ? item.en : item.zh;
+        const textW = gearCtx.measureText(name).width;
+        const textRect = { x: item.x, y: item.y-24, w: textW+16, h: 32 };
+        gearCtx.fillStyle = '#2b3b2b'; gearCtx.fillRect(textRect.x, textRect.y, textRect.w, textRect.h);
+        gearCtx.fillStyle = '#f0eac1'; gearCtx.fillText(name, item.x+8, item.y);
+        hitRegions.push({ rect:[textRect.x, textRect.y, textRect.w, textRect.h], url: item.url });
+      });
+      
+      hitRegions.push({ rect:[360,35,80,40], url:'gear/gear.html?type=helmet' });
+      hitRegions.push({ rect:[335,255,120,35], url:'gear/gear.html?type=shoes' });
+      hitRegions.push({ rect:[340,175,130,70], url:'gear/gear.html?type=harness' });
+      hitRegions.push({ rect:[385,130,45,40], url:'gear/gear.html?type=belay' });
+      hitRegions.push({ rect:[280,105,80,40], url:'gear/gear.html?type=gloves' });
+    }
+
+    function applyLanguage(lang) {
+      currentLang = lang;
+      document.querySelectorAll('[data-lang-key]').forEach(el => {
+        const key = el.getAttribute('data-lang-key');
+        if (langDict[lang] && langDict[lang][key]) { el.textContent = langDict[lang][key]; }
+      });
+      drawGearScene();
+    }
 
     function updateProgressAndEffects() {
       const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
@@ -646,8 +381,8 @@
         section.style.opacity = opacity;
       });
 
-      if (gearCanvas) {
-        const gearSection = document.getElementById('sectionGear');
+      const gearSection = document.getElementById('sectionGear');
+      if (gearCanvas && gearSection) {
         const rect = gearSection.getBoundingClientRect();
         const viewportMid = window.innerHeight / 2;
         const distance = Math.abs(rect.top + rect.height/2 - viewportMid);
@@ -658,179 +393,37 @@
         gearCanvas.style.translate = `${-shiftX}px 0`;
       }
     }
-    window.addEventListener('scroll', updateProgressAndEffects);
-    window.addEventListener('resize', updateProgressAndEffects);
+
+    const savedLang = localStorage.getItem('climb_lang') || 'zh';
+    langToggle.textContent = savedLang === 'zh' ? '中 / EN' : 'EN / 中';
+    applyLanguage(savedLang); 
     updateProgressAndEffects();
 
-    // ---------- 地圖繪製 ----------
-    const mapCanvas = document.getElementById('hkMap');
-    if (mapCanvas) {
-      const ctx = mapCanvas.getContext('2d');
-      const w = 900, h = 500;
-      mapCanvas.width = w; mapCanvas.height = h;
-      function drawHKMap() {
-        ctx.clearRect(0, 0, w, h);
-        ctx.fillStyle = '#6b7f7a'; ctx.strokeStyle = '#2d3a2d'; ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.moveTo(150,120); ctx.lineTo(280,80); ctx.lineTo(420,100); ctx.lineTo(580,140); ctx.lineTo(700,200);
-        ctx.lineTo(780,280); ctx.lineTo(750,380); ctx.lineTo(620,420); ctx.lineTo(500,390); ctx.lineTo(400,340);
-        ctx.lineTo(320,300); ctx.lineTo(220,280); ctx.lineTo(160,240); ctx.closePath(); ctx.fill(); ctx.stroke();
-        ctx.beginPath();
-        ctx.moveTo(520,350); ctx.lineTo(600,330); ctx.lineTo(680,360); ctx.lineTo(710,410); ctx.lineTo(640,440);
-        ctx.lineTo(550,430); ctx.lineTo(500,400); ctx.closePath(); ctx.fillStyle='#5d6e5d'; ctx.fill(); ctx.stroke();
-        ctx.beginPath();
-        ctx.moveTo(200,300); ctx.lineTo(260,280); ctx.lineTo(300,320); ctx.lineTo(280,380); ctx.lineTo(220,390);
-        ctx.lineTo(170,360); ctx.closePath(); ctx.fillStyle='#5e7565'; ctx.fill(); ctx.stroke();
-        const spots = [[300,180],[420,220],[580,200],[650,340],[250,330],[480,370],[370,270]];
-        ctx.fillStyle='#d64040'; ctx.shadowColor='#300'; ctx.shadowBlur=8;
-        spots.forEach(p=>{ ctx.beginPath(); ctx.arc(p[0],p[1],8,0,2*Math.PI); ctx.fill(); });
-        ctx.shadowBlur=0; ctx.font='bold 12px system-ui'; ctx.fillStyle='#fdd';
-        ctx.fillText('獅子山',260,165); ctx.fillText('飛鵝山',380,210);
-        ctx.fillText('東龍島',540,180); ctx.fillText('石澳',660,320);
-      }
-      drawHKMap();
-    }
-
-    document.getElementById('mapClickArea').addEventListener('click', ()=> window.location.href='map/');
-
-    // 入門卡片點擊
-    document.querySelectorAll('.intro-card').forEach(card => {
-      card.addEventListener('click', (e) => {
-        const goto = card.dataset.goto || 'artificial';
-        window.location.href = `${goto}/`;
-      });
+    langToggle.addEventListener('click', () => {
+      const newLang = currentLang === 'zh' ? 'en' : 'zh';
+      localStorage.setItem('climb_lang', newLang);
+      langToggle.textContent = newLang === 'zh' ? '中 / EN' : 'EN / 中';
+      applyLanguage(newLang);
     });
 
-    // ---------- 裝備 Canvas (繩索移至右側，強化繪製) ----------
-    const gearCtx = gearCanvas.getContext('2d');
-    const gw = 900, gh = 550;
-    gearCanvas.width = gw; gearCanvas.height = gh;
-    const hitRegions = [];
+    menuToggle.addEventListener('click', (e) => {
+      e.stopPropagation(); navDropdown.classList.toggle('active');
+    });
+    document.addEventListener('click', (e) => {
+      if (!menuToggle.contains(e.target) && !navDropdown.contains(e.target)) navDropdown.classList.remove('active');
+    });
+    document.querySelectorAll('.nav-item').forEach(item => {
+      item.addEventListener('click', () => { navDropdown.classList.remove('active'); });
+    });
 
-    function drawGearScene() {
-      gearCtx.clearRect(0, 0, gw, gh);
-      hitRegions.length = 0;
+    document.getElementById('mapClickArea').addEventListener('click', () => { window.location.href = 'Map/map.html'; });
 
-      // ---- 繩索在右側 (x=480 左右) ----
-      gearCtx.shadowColor = '#1a1a1a';
-      gearCtx.shadowBlur = 10;
-      // 主繩垂直
-      gearCtx.fillStyle = '#b5875a';
-      gearCtx.fillRect(480, 20, 30, 230);
-      // 繩索紋理
-      gearCtx.fillStyle = '#9c7a4d';
-      for (let i=25; i<250; i+=12) {
-        gearCtx.fillRect(480, i, 30, 4);
-      }
-      gearCtx.fillStyle = '#dbb07c';
-      gearCtx.globalAlpha = 0.5;
-      gearCtx.fillRect(485, 20, 8, 230);
-      gearCtx.globalAlpha = 1.0;
-      
-      // 繩索標籤 (位置在繩索右側附近)
-      gearCtx.shadowBlur = 6;
-      gearCtx.font = 'bold 16px system-ui, sans-serif';
-      gearCtx.fillStyle = '#2b3b2b';
-      gearCtx.fillRect(520, 30, 80, 28);
-      gearCtx.fillStyle = '#f0eac1';
-      const ropeLabel = currentLang === 'zh' ? '繩索' : 'Rope';
-      gearCtx.fillText(ropeLabel, 530, 50);
-      
-      gearCtx.shadowBlur = 0;
-
-      // 小人 (中心約在 x=400)
-      gearCtx.fillStyle = '#f7d9aa';
-      gearCtx.beginPath();
-      gearCtx.arc(400, 75, 28, 0, 2*Math.PI);
-      gearCtx.fill();
-      gearCtx.strokeStyle = '#6b4f2c';
-      gearCtx.lineWidth = 2;
-      gearCtx.stroke();
-      
-      gearCtx.fillStyle = '#4f7a9e';
-      gearCtx.fillRect(365, 105, 70, 90);
-      gearCtx.fillRect(315, 115, 45, 18);
-      gearCtx.fillRect(440, 115, 45, 18);
-      gearCtx.fillRect(355, 200, 22, 65);
-      gearCtx.fillRect(423, 200, 22, 65);
-      
-      // 頭盔
-      gearCtx.fillStyle = '#d63e3e';
-      gearCtx.beginPath();
-      gearCtx.arc(400, 65, 32, Math.PI, 2*Math.PI);
-      gearCtx.fill();
-      
-      // 攀石鞋
-      gearCtx.fillStyle = '#b05e2e';
-      gearCtx.beginPath();
-      gearCtx.moveTo(345, 265); gearCtx.lineTo(375, 265); gearCtx.lineTo(382, 285); gearCtx.lineTo(338, 285); gearCtx.closePath(); gearCtx.fill();
-      gearCtx.beginPath();
-      gearCtx.moveTo(415, 265); gearCtx.lineTo(445, 265); gearCtx.lineTo(452, 285); gearCtx.lineTo(408, 285); gearCtx.closePath(); gearCtx.fill();
-
-      // 安全帶
-      gearCtx.fillStyle = '#2e5c6b';
-      gearCtx.fillRect(345, 180, 110, 12);
-      gearCtx.fillRect(345, 200, 18, 40);
-      gearCtx.fillRect(437, 200, 18, 40);
-      gearCtx.fillRect(385, 180, 10, 55);
-      gearCtx.fillRect(405, 180, 10, 55);
-      
-      // Belay device
-      gearCtx.fillStyle = '#7a8f8c';
-      gearCtx.beginPath();
-      gearCtx.arc(400, 150, 15, 0, 2*Math.PI);
-      gearCtx.fill();
-      gearCtx.fillStyle = '#a0b0a8';
-      gearCtx.beginPath();
-      gearCtx.arc(412, 143, 12, 0, 2*Math.PI);
-      gearCtx.fill();
-      
-      // 手套
-      gearCtx.fillStyle = '#bd7a5a';
-      gearCtx.fillRect(295, 115, 25, 20);
-      gearCtx.fillRect(285, 122, 14, 10);
-      gearCtx.fillRect(470, 115, 25, 20);
-      gearCtx.fillRect(490, 122, 14, 10);
-      
-      // 連線與裝備名稱 (座標因小人左移而調整)
-      const isEn = currentLang === 'en';
-      const labels = [
-        { zh: '頭盔', en: 'Helmet', x: 160, y: 90, cx: 365, cy: 65, url: 'helmet/' },
-        { zh: '攀石鞋', en: 'Shoes', x: 120, y: 270, cx: 350, cy: 270, url: 'shoes/' },
-        { zh: '安全帶', en: 'Harness', x: 580, y: 200, cx: 455, cy: 190, url: 'harness/' },
-        { zh: '確保器', en: 'Belay', x: 660, y: 140, cx: 425, cy: 145, url: 'belay/' },
-        { zh: '手套', en: 'Gloves', x: 560, y: 100, cx: 480, cy: 120, url: 'gloves/' }
-      ];
-      
-      gearCtx.font = 'bold 18px system-ui, sans-serif';
-      gearCtx.fillStyle = '#f5f0dc';
-      gearCtx.strokeStyle = '#cdc6a5';
-      gearCtx.lineWidth = 2;
-      
-      labels.forEach(item => {
-        gearCtx.beginPath();
-        gearCtx.moveTo(item.cx, item.cy);
-        gearCtx.lineTo(item.x + 50, item.y - 5);
-        gearCtx.stroke();
-        const name = isEn ? item.en : item.zh;
-        const textW = gearCtx.measureText(name).width;
-        const textRect = { x: item.x, y: item.y-24, w: textW+16, h: 32 };
-        gearCtx.fillStyle = '#2b3b2b';
-        gearCtx.fillRect(textRect.x, textRect.y, textRect.w, textRect.h);
-        gearCtx.fillStyle = '#f0eac1';
-        gearCtx.fillText(name, item.x+8, item.y);
-        hitRegions.push({ rect: [textRect.x, textRect.y, textRect.w, textRect.h], url: item.url });
+    document.querySelectorAll('.intro-card').forEach(card => {
+      card.addEventListener('click', (e) => {
+        const goto = card.dataset.goto;
+        if(goto) window.location.href = goto;
       });
-      
-      // 圖形點擊區
-      hitRegions.push({ rect:[360,35,80,40], url:'helmet/' });
-      hitRegions.push({ rect:[335,255,120,35], url:'shoes/' });
-      hitRegions.push({ rect:[340,175,130,70], url:'harness/' });
-      hitRegions.push({ rect:[385,130,45,40], url:'belay/' });
-      hitRegions.push({ rect:[280,105,80,40], url:'gloves/' });
-    }
-
-    drawGearScene();
+    });
 
     gearCanvas.addEventListener('click', (e) => {
       const rect = gearCanvas.getBoundingClientRect();
@@ -847,20 +440,10 @@
       }
     });
 
-    // 歷史點擊
-    document.getElementById('sectionHistory').addEventListener('click', ()=> window.location.href='history/');
-
-    // 底部footer點擊防冒泡
+    document.getElementById('sectionHistory').addEventListener('click', ()=> window.location.href='history/history.html');
     document.getElementById('mainFooter').addEventListener('click', (e)=> e.stopPropagation());
-
-    // 初始化語言
-    applyLanguage('zh');
-
-    window.addEventListener('resize', ()=> {
-      drawHKMap();
-      drawGearScene();
-      updateProgressAndEffects();
-    });
+    window.addEventListener('scroll', updateProgressAndEffects);
+    window.addEventListener('resize', ()=> { drawGearScene(); updateProgressAndEffects(); });
 
   })();
 </script>
