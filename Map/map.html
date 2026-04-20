@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>香港攀岩地图 · 真实底图</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, sans-serif; }
+        body { background: #1a2f26; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        .card { max-width: 1300px; width: 100%; background: #e2ede4; border-radius: 36px; padding: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.25); }
+        h1 { font-size: 2.4rem; color: #1d4e3d; margin-bottom: 4px; }
+        .sub { color: #2a5e4a; margin-bottom: 20px; font-size: 1.1rem; }
+        .map-wrapper { background: #b3ccbc; border-radius: 28px; padding: 16px; }
+        .canvas-container { border-radius: 20px; overflow: auto; max-height: 75vh; }
+        #displayCanvas { display: block; width: 100%; height: auto; border-radius: 16px; cursor: default; }
+        .info-bar { display: flex; align-items: center; margin-top: 16px; gap: 20px; flex-wrap: wrap; }
+        .hover-box { background: #1e3a2f; color: #ecf7ef; padding: 10px 24px; border-radius: 60px; min-width: 260px; font-weight: 500; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .legend { display: flex; gap: 18px; margin-left: auto; }
+        .legend span { display: flex; align-items: center; gap: 5px; }
+        .dot { width: 14px; height: 14px; border-radius: 50%; display: inline-block; border: 2px solid white; }
+        .spot-panel { margin-top: 20px; background: #f4faf6; border-radius: 28px; padding: 16px 24px; }
+        .spot-panel h3 { color: #1f4a3c; margin-bottom: 10px; }
+        #spotDetail { color: #1d3d2f; }
+    </style>
+</head>
+<body>
+<div class="card">
+    <h1>🧗 香港攀岩 · 抱石全攻略</h1>
+    <div class="sub">真实底图 · 天然岩壁 · 人工岩馆</div>
+    
+    <div class="map-wrapper">
+        <div class="canvas-container">
+            <canvas id="displayCanvas"></canvas>
+        </div>
+    </div>
+    
+    <div class="info-bar">
+        <div class="hover-box" id="hoverInfo">🖱️ 鼠标悬停查看攀岩点</div>
+        <div class="legend">
+            <span><i class="dot" style="background:#2b6e4f;"></i>天然抱石</span>
+            <span><i class="dot" style="background:#d97706;"></i>人工抱石</span>
+            <span><i class="dot" style="background:#1e5f8e;"></i>天然攀登</span>
+            <span><i class="dot" style="background:#b13e6b;"></i>人工攀登</span>
+        </div>
+    </div>
+    
+    <div class="spot-panel" id="spotDetail">
+        <h3>📍 点击标记查看详情</h3>
+        <p>地图上共有 <span id="totalSpots">0</span> 个攀岩点。</p>
+    </div>
+</div>
+
+<script>
+    (function(){
+        // ---------- 从采集器导出的 spots 数据粘贴到此处 ----------
+const spots = [
+  {
+    "name": "東龍洲（Tung Lung Chau）",
+    "type": "natural_boulder",
+    "x": 874,
+    "y": 823,
+    "desc": "難度範圍：VB 至 V12  岩石類型：火山岩  地點：西貢南端東龍洲島  前往方法：於鯉魚門三家村碼頭或西灣河碼頭乘街渡前往  路線描述：東龍洲東海岸佈滿懸崖峭壁，是深受歡迎的攀岩熱點。除運動攀登路線外，島上海岸遍佈大量抱石，岩石表面粗糙，摩擦力極佳，適合在欣賞海景的同時挑戰各種抱石路線。"
+  },
+
+        ];
+        // ------------------------------------------------
+        
+        const canvas = document.getElementById('displayCanvas');
+        const ctx = canvas.getContext('2d');
+        const MAP_PATH = '../image/map.jpg';
+        let mapImage = new Image();
+        let imgWidth = 0, imgHeight = 0;
+        
+        const hoverInfo = document.getElementById('hoverInfo');
+        const totalSpan = document.getElementById('totalSpots');
+        const spotDetailDiv = document.getElementById('spotDetail');
+        
+        mapImage.crossOrigin = 'Anonymous';
+        mapImage.src = MAP_PATH;
+        mapImage.onload = function() {
+            imgWidth = mapImage.width;
+            imgHeight = mapImage.height;
+            canvas.width = imgWidth;
+            canvas.height = imgHeight;
+            totalSpan.textContent = spots.length;
+            drawMap();
+        };
+        mapImage.onerror = () => alert('地图图片加载失败，请确认 ../image/map.jpg 存在。');
+        
+        function drawMap() {
+            if (!imgWidth) return;
+            ctx.drawImage(mapImage, 0, 0, imgWidth, imgHeight);
+            
+            spots.forEach(spot => {
+                let color = '#2b6e4f';
+                if (spot.type === 'artificial_boulder') color = '#d97706';
+                else if (spot.type === 'natural_sport') color = '#1e5f8e';
+                else if (spot.type === 'artificial_sport') color = '#b13e6b';
+                
+                ctx.shadowColor = '#1a2f25';
+                ctx.shadowBlur = 6;
+                ctx.beginPath();
+                ctx.arc(spot.x, spot.y, 8, 0, 2*Math.PI);
+                ctx.fillStyle = color;
+                ctx.fill();
+                ctx.strokeStyle = 'white';
+                ctx.lineWidth = 2.2;
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.arc(spot.x, spot.y, 4, 0, 2*Math.PI);
+                ctx.fillStyle = '#fff9e6';
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            });
+        }
+        
+        // 交互：悬停与点击
+        function handleMouseMove(e) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            const mouseX = (e.clientX - rect.left) * scaleX;
+            const mouseY = (e.clientY - rect.top) * scaleY;
+            
+            let closest = null;
+            let minDist = 20;
+            spots.forEach(spot => {
+                const dx = mouseX - spot.x, dy = mouseY - spot.y;
+                const dist = Math.sqrt(dx*dx + dy*dy);
+                if (dist < minDist) { minDist = dist; closest = spot; }
+            });
+            if (closest) {
+                hoverInfo.innerHTML = `📍 ${closest.name}  ·  ${closest.desc || ''}`;
+            } else {
+                hoverInfo.innerHTML = `🖱️ 鼠标悬停查看攀岩点`;
+            }
+        }
+        
+        function handleCanvasClick(e) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            const clickX = (e.clientX - rect.left) * scaleX;
+            const clickY = (e.clientY - rect.top) * scaleY;
+            
+            let closest = null;
+            let minDist = 25;
+            spots.forEach(spot => {
+                const dx = clickX - spot.x, dy = clickY - spot.y;
+                const dist = Math.sqrt(dx*dx + dy*dy);
+                if (dist < minDist) { minDist = dist; closest = spot; }
+            });
+            if (closest) {
+                let typeStr = '';
+                if (closest.type === 'natural_boulder') typeStr = '🌿 天然抱石';
+                else if (closest.type === 'artificial_boulder') typeStr = '🏢 人工抱石';
+                else if (closest.type === 'natural_sport') typeStr = '⛰️ 天然攀登';
+                else typeStr = '🧗 人工攀登';
+                spotDetailDiv.innerHTML = `<h3>🧗 ${closest.name}</h3>
+                    <p><strong>类型:</strong> ${typeStr} &nbsp; | &nbsp; <strong>描述:</strong> ${closest.desc || '暂无'}</p>
+                    <p style="margin-top:8px; color:#386655;">坐标: (${Math.round(closest.x)}, ${Math.round(closest.y)})</p>`;
+            }
+        }
+        
+        canvas.addEventListener('mousemove', handleMouseMove);
+        canvas.addEventListener('click', handleCanvasClick);
+        canvas.addEventListener('mouseleave', () => { hoverInfo.innerHTML = '🖱️ 鼠标悬停查看攀岩点'; });
+        
+        // 初始化显示总数
+        totalSpan.textContent = spots.length;
+    })();
+</script>
+</body>
+</html>

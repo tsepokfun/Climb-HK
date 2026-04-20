@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>香港攀岩歷史 · 攀·香港</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: black;
+      color: white;
+      font-family: system-ui, -apple-system, 'Helvetica Neue', 'Noto Sans HK', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* 繼承主站頂欄 */
+    .top-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 64px;
+      background-color: black;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      z-index: 100;
+      border-bottom: 1px solid #333;
+    }
+
+    .menu-area {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .back-link {
+      color: #ccc;
+      text-decoration: none;
+      font-size: 1.2rem;
+      padding: 6px 12px;
+      border-radius: 30px;
+      background: #222;
+      transition: 0.2s;
+      border: 1px solid #444;
+    }
+
+    .back-link:hover {
+      background: #3a5a3a;
+      color: white;
+    }
+
+    .site-title {
+      font-weight: 600;
+      font-size: 1.4rem;
+      letter-spacing: 2px;
+    }
+
+    .lang-switch {
+      background: #2a2a2a;
+      color: #ddd;
+      border: 1px solid #777;
+      padding: 6px 14px;
+      border-radius: 30px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.2s;
+      user-select: none;
+    }
+
+    .lang-switch:hover {
+      background: #4a6a4a;
+      color: white;
+      border-color: #aaa;
+    }
+
+    /* 主要內容區域 */
+    .main-content {
+      margin-top: 64px;
+      padding: 40px 24px 60px;
+      max-width: 1200px;
+      margin-left: auto;
+      margin-right: auto;
+      width: 100%;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(2px);
+      min-height: calc(100vh - 64px);
+      position: relative;
+      z-index: 1;
+    }
+
+    /* 背景圖層 (模擬主站氛圍) */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image: url('../image/ClimbingRoute.png');
+      background-size: cover;
+      background-position: center;
+      opacity: 0.2;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    h1 {
+      font-size: 3.2rem;
+      margin-bottom: 16px;
+      font-weight: 600;
+      letter-spacing: 4px;
+      border-left: 6px solid #b98c5f;
+      padding-left: 24px;
+      text-shadow: 2px 2px 8px black;
+    }
+
+    .subhead {
+      font-size: 1.2rem;
+      margin-bottom: 40px;
+      opacity: 0.9;
+      color: #ccc;
+    }
+
+    /* 時間線容器 */
+    .timeline {
+      position: relative;
+      margin: 40px 0;
+    }
+
+    /* 年代標題 */
+    .era {
+      margin-top: 48px;
+      margin-bottom: 16px;
+      font-size: 2.4rem;
+      font-weight: 700;
+      color: #dbb07c;
+      border-bottom: 2px solid #5a6a5a;
+      padding-bottom: 8px;
+    }
+
+    .era:first-of-type {
+      margin-top: 0;
+    }
+
+    /* 事件卡片 */
+    .event-card {
+      background: rgba(20, 25, 20, 0.8);
+      backdrop-filter: blur(4px);
+      border-left: 6px solid #b98c5f;
+      margin-bottom: 20px;
+      padding: 20px 28px;
+      border-radius: 0 16px 16px 0;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.5);
+      transition: transform 0.2s;
+    }
+
+    .event-card:hover {
+      transform: translateX(6px);
+      background: rgba(40, 50, 40, 0.9);
+    }
+
+    .event-year {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #e0c090;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+    }
+
+    .event-year small {
+      font-size: 1rem;
+      font-weight: 400;
+      color: #aaa;
+    }
+
+    .event-desc {
+      font-size: 1.1rem;
+      line-height: 1.6;
+      color: #f0f0e0;
+    }
+
+    /* 數據表格 */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-top: 48px;
+      background: rgba(30,35,30,0.7);
+      padding: 28px;
+      border-radius: 24px;
+      backdrop-filter: blur(4px);
+      border: 1px solid #5a7a5a;
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 2.8rem;
+      font-weight: 800;
+      color: #dbb07c;
+    }
+
+    .stat-label {
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #bbb;
+    }
+
+    .footer-note {
+      margin-top: 48px;
+      text-align: right;
+      color: #aaa;
+      font-style: italic;
+      border-top: 1px solid #3a4a3a;
+      padding-top: 24px;
+    }
+
+    /* 語言切換時的文字調整 */
+    .lang-en .event-desc,
+    .lang-zh .event-desc {
+      /* 由js控制 */
+    }
+
+    @media (max-width: 600px) {
+      h1 { font-size: 2.4rem; }
+      .event-year { font-size: 1.5rem; flex-wrap: wrap; }
+      .main-content { padding: 20px 16px; }
+    }
+  </style>
+</head>
+<body class="lang-zh">
+
+<!-- 固定頂欄 (與主站一致) -->
+<header class="top-bar">
+  <div class="menu-area">
+    <a href="../index.html" class="back-link" data-lang-key="back_home">← 返回主頁</a>
+  </div>
+  <div class="site-title" data-lang-key="history_title">香港攀岩歷史</div>
+  <div class="lang-switch" id="langToggle">中 / EN</div>
+</header>
+
+<!-- 主要內容 -->
+<main class="main-content">
+  <h1 data-lang-key="page_heading">攀岩編年史</h1>
+  <div class="subhead" data-lang-key="page_subhead">從獅子山首攀到國際舞台，香港攀岩的演進足跡</div>
+
+  <!-- 時間線將由JS動態生成，以支持語言切換 -->
+  <div id="timelineContainer" class="timeline"></div>
+
+  <!-- 關鍵數據區塊 (靜態數字) -->
+  <div class="stats-grid">
+    <div class="stat-item">
+      <div class="stat-number">25</div>
+      <div class="stat-label" data-lang-key="stat_crags">天然岩場</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">~700</div>
+      <div class="stat-label" data-lang-key="stat_routes">運動攀登路線</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">1,300+</div>
+      <div class="stat-label" data-lang-key="stat_boulders">抱石路線</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">14</div>
+      <div class="stat-label" data-lang-key="stat_gyms">抱石場地</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">370+</div>
+      <div class="stat-label" data-lang-key="stat_coaches">註冊教練</div>
+    </div>
+  </div>
+
+  <div class="footer-note" data-lang-key="data_source">資料來源：《Hong Kong Rock》2023 · theCrag · 中國香港攀山及攀登總會</div>
+</main>
+
+<script>
+  (function(){
+    "use strict";
+
+    // ---------- 多語言字典 (歷史頁面專用) ----------
+    const langDict = {
+      zh: {
+        back_home: '← 返回主頁',
+        history_title: '香港攀岩歷史',
+        page_heading: '攀岩編年史',
+        page_subhead: '從獅子山首攀到國際舞台，香港攀岩的演進足跡',
+        stat_crags: '天然岩場',
+        stat_routes: '運動攀登路線',
+        stat_boulders: '抱石路線',
+        stat_gyms: '抱石場地',
+        stat_coaches: '註冊教練',
+        data_source: '資料來源：《Hong Kong Rock》2023 · theCrag · 中國香港攀山及攀登總會',
+        // 年代標題
+        era_1950s: '1950s — 開端與啟蒙',
+        era_1960s: '1960s — 首本指南出版',
+        era_1970s: '1970s — 走向大眾',
+        era_1980s: '1980s — 組織化與正規化',
+        era_1990s: '1990s — 國際賽事降臨',
+        era_2000s: '2000s — 輝煌十年',
+        era_2010s: '2010s — 整合與專業化',
+        era_2020s: '2020s — 新時代',
+        // 事件數據 (按年代分組)
+        events: {
+          '1950s': [
+            { year: '1956', desc: '英軍駐守啟德機場時首攀獅子山，為香港有紀錄的首次攀岩活動。同年1月，皇家空軍組成首支攀山搶救隊，隊長 Tony Smith 成立香港首個攀岩組織「香港攀山會」（軍方組織）。' },
+            { year: '1950年代末', desc: '攀岩活動開始出現相關書面記錄。' }
+          ],
+          '1960s': [
+            { year: '1968', desc: '英國皇家空軍沙展 Steve Reeve 編寫香港首本攀岩指南，出版後掀起攀岩熱潮。' }
+          ],
+          '1970s': [
+            { year: '1970年代初', desc: '外展訓練學校成立，將野外攀岩列為訓練項目，吸引更多年輕人參與。' },
+            { year: '1970年代', desc: '室內人工攀牆概念誕生（蘇聯攀山愛好者為免天氣影響而設計），其後近十年才引入香港。' }
+          ],
+          '1980s': [
+            { year: '1984', desc: '「香港攀山總會」（HKMU）成立，為香港攀岩運動的地區代表組織。' },
+            { year: '1988', desc: '香港攀山總會成為國際攀山聯盟（UIAA）正式成員。' },
+            { year: '1989', desc: '總會獲康體發展局資助成為國家體育總會（NSA），進一步穩定發展基礎。' }
+          ],
+          '1990s': [
+            { year: '1991', desc: '「亞洲攀岩委員會」（ACC）在香港成立。12月：首屆亞洲攀岩錦標賽在香港舉行，設男子及女子速度賽、難度賽、抱石賽六個項目。' },
+            { year: '1992', desc: '湛易佳成為首位登頂珠穆朗瑪峰的香港人。' },
+            { year: '1990年代末', desc: '抱石運動在香港展開大規模探索與開發。' }
+          ],
+          '2000s': [
+            { year: '2000', desc: '黎志偉於第二屆亞洲青少年錦標賽奪得速度賽金牌，為香港首面運動攀登國際賽金牌。' },
+            { year: '2002', desc: '黎志偉活躍於中國速度攀岩領域，與陳小捷、馬和太等選手成為亞錦賽競爭主力。' },
+            { year: '2004', desc: 'Stuart Millis 出版香港首本抱石指南《Hong Kong Bouldering》，標誌抱石運動正式登陸香港。' },
+            { year: '2005', desc: '黎志偉躋身世界攀岩排名第八，獲「亞洲攀石王」美譽。' },
+            { year: '2006', desc: '朱嘉偉在泰國 Krabi 完成 8b+（5.14a）路線，創當時華人最高難度紀錄。' },
+            { year: '2008', desc: '黎志偉於長洲搶包山比賽奪冠，獲「包山王」稱號。' }
+          ],
+          '2010s': [
+            { year: '2010', desc: '香港攀山總會與香港攀登運動總會合併，重組為「中國香港攀山及攀登總會」（CHKMCU）。' },
+            { year: '2011', desc: '何善揮兩度奪得全國攀岩抱石賽冠軍。' },
+            { year: '2012', desc: '總會正式更名為「中國香港攀山及攀登總會」；鍾建民完成「7+2」壯舉（七大洲最高峰＋南北兩極）。' },
+            { year: '2013', desc: '曾志成成為首位從南坡及北坡均成功登頂珠峰的香港人。' },
+            { year: '2017', desc: '陳翔志奪得全運會男子抱石冠軍。' },
+            { year: '2018', desc: '亞運會納入運動攀登速度賽，香港相繼建成多個速度賽場地。' },
+            { year: '2019', desc: '香港主辦「香港抱石錦標賽」及「亞洲盃（抱石）」兩大賽事，陳翔志奪得男子公開組冠軍。' }
+          ],
+          '2020s': [
+            { year: '2020', desc: '東京奧運會首次將運動攀登列為正式項目，香港攀岩熱潮進一步升溫。' },
+            { year: '2020', desc: '駱志偉於南丫島開設難度達 8b 的抱石路線「Shadow of Mountains」，為香港難度最高的抱石線之一。' },
+            { year: '2020-2023', desc: '香港新增超過 650 條運動攀登路線，第二版《Hong Kong Rock》指南收錄大量新岩場資訊。' },
+            { year: '2023', desc: '香港已有 25 個天然攀岩場地，超過 700 條路線。抱石場地數量持續增長，消費者委員會就安全問題發出指引。' },
+            { year: '2025', desc: '香港抱石錦標賽於九龍公園舉行，陳翔志再度衛冕男子公開組冠軍。' }
+          ]
+        }
+      },
+      en: {
+        back_home: '← Back to Home',
+        history_title: 'HK Climbing History',
+        page_heading: 'Chronicle of Climbing',
+        page_subhead: 'From the first ascent of Lion Rock to the international stage',
+        stat_crags: 'Natural Crags',
+        stat_routes: 'Sport Routes',
+        stat_boulders: 'Boulder Problems',
+        stat_gyms: 'Bouldering Gyms',
+        stat_coaches: 'Registered Coaches',
+        data_source: 'Sources: Hong Kong Rock 2023 · theCrag · CHKMCU',
+        era_1950s: '1950s — Beginnings',
+        era_1960s: '1960s — First Guidebook',
+        era_1970s: '1970s — Going Public',
+        era_1980s: '1980s — Organisation & Formalisation',
+        era_1990s: '1990s — International Events Arrive',
+        era_2000s: '2000s — Golden Decade',
+        era_2010s: '2010s — Integration & Professionalisation',
+        era_2020s: '2020s — New Era',
+        events: {
+          '1950s': [
+            { year: '1956', desc: 'First recorded climb in Hong Kong: British military personnel ascended Lion Rock. In January, the RAF formed the first mountain rescue team; Tony Smith established the "Hong Kong Mountaineering Club" (military).' },
+            { year: 'Late 1950s', desc: 'Written records of climbing activities began to appear.' }
+          ],
+          '1960s': [
+            { year: '1968', desc: 'Sgt Steve Reeve of the RAF published Hong Kong\'s first climbing guidebook, sparking a climbing boom.' }
+          ],
+          '1970s': [
+            { year: 'Early 1970s', desc: 'Outward Bound School established, including rock climbing as training, attracting more young people.' },
+            { year: '1970s', desc: 'Indoor artificial climbing walls were invented in the Soviet Union; they reached Hong Kong nearly a decade later.' }
+          ],
+          '1980s': [
+            { year: '1984', desc: 'Hong Kong Mountaineering Union (HKMU) founded as the local representative body.' },
+            { year: '1988', desc: 'HKMU became a full member of the UIAA.' },
+            { year: '1989', desc: 'HKMU received funding from the Sports Development Board and became a National Sports Association (NSA).' }
+          ],
+          '1990s': [
+            { year: '1991', desc: 'Asian Climbing Committee (ACC) established in Hong Kong. In December, the first Asian Climbing Championships took place in Hong Kong with six events.' },
+            { year: '1992', desc: 'Cham Yick-kai became the first Hong Konger to summit Mount Everest.' },
+            { year: 'Late 1990s', desc: 'Large-scale exploration and development of bouldering began in Hong Kong.' }
+          ],
+          '2000s': [
+            { year: '2000', desc: 'Lai Chi-wai won Hong Kong\'s first international sport climbing gold (speed) at the 2nd Asian Youth Championships.' },
+            { year: '2002', desc: 'Lai Chi-wai was active in China\'s speed climbing scene, competing against Chen Xiaojie and Ma Hetai.' },
+            { year: '2004', desc: 'Stuart Millis published "Hong Kong Bouldering", the first dedicated bouldering guide, marking the sport\'s official arrival.' },
+            { year: '2005', desc: 'Lai Chi-wai ranked 8th in the world, earning the nickname "King of Asian Climbing".' },
+            { year: '2006', desc: 'Chu Ka-wai climbed an 8b+ (5.14a) route in Krabi, Thailand, a record difficulty for Chinese climbers at the time.' },
+            { year: '2008', desc: 'Lai Chi-wai won the Cheung Chau Bun Scrambling Competition, dubbed "King of the Bun Tower".' }
+          ],
+          '2010s': [
+            { year: '2010', desc: 'HKMU and Hong Kong Climbing Union merged to form the China Hong Kong Mountaineering and Climbing Union (CHKMCU).' },
+            { year: '2011', desc: 'Ho Sin-fai won the National Bouldering Championship twice.' },
+            { year: '2012', desc: 'Union officially renamed CHKMCU; Chung Kin-man completed the "7+2" challenge (Seven Summits plus both poles).' },
+            { year: '2013', desc: 'Tsang Chi-shing became the first Hong Konger to summit Everest from both the south and north sides.' },
+            { year: '2017', desc: 'Chan Cheung-chi won the men\'s bouldering title at the National Games of China.' },
+            { year: '2018', desc: 'Speed climbing added to the Asian Games; Hong Kong built several speed walls.' },
+            { year: '2019', desc: 'Hong Kong hosted the Hong Kong Bouldering Championships and the Asian Cup (Bouldering); Chan Cheung-chi won the men\'s open.' }
+          ],
+          '2020s': [
+            { year: '2020', desc: 'Sport climbing made its Olympic debut in Tokyo, further boosting the sport in Hong Kong.' },
+            { year: '2020', desc: 'Lok Chi-wai established "Shadow of Mountains" (8b) on Lamma Island, Hong Kong\'s hardest boulder problem.' },
+            { year: '2020-2023', desc: 'Over 650 new sport routes added; the second edition of "Hong Kong Rock" documented many new crags.' },
+            { year: '2023', desc: 'Hong Kong has 25 natural crags and over 700 routes. Bouldering venues continue to grow; the Consumer Council issued safety guidelines.' },
+            { year: '2025', desc: 'Hong Kong Bouldering Championships held at Kowloon Park; Chan Cheung-chi defended his title.' }
+          ]
+        }
+      }
+    };
+
+    let currentLang = 'zh';
+
+    // 渲染時間線
+    function renderTimeline(lang) {
+      const container = document.getElementById('timelineContainer');
+      const dict = langDict[lang];
+      const eventsData = dict.events;
+      const eraOrder = ['1950s', '1960s', '1970s', '1980s', '1990s', '2000s', '2010s', '2020s'];
+      
+      let html = '';
+      for (let era of eraOrder) {
+        if (!eventsData[era]) continue;
+        const eraTitle = dict[`era_${era}`] || era;
+        html += `<div class="era">${eraTitle}</div>`;
+        
+        eventsData[era].forEach(ev => {
+          html += `
+            <div class="event-card">
+              <div class="event-year">${ev.year} <small>${lang === 'zh' ? '' : ''}</small></div>
+              <div class="event-desc">${ev.desc}</div>
+            </div>
+          `;
+        });
+      }
+      container.innerHTML = html;
+    }
+
+    // 應用語言至所有帶 data-lang-key 的元素
+    function applyLanguage(lang) {
+      document.querySelectorAll('[data-lang-key]').forEach(el => {
+        const key = el.getAttribute('data-lang-key');
+        if (langDict[lang] && langDict[lang][key]) {
+          el.textContent = langDict[lang][key];
+        }
+      });
+      // 重新繪製時間線
+      renderTimeline(lang);
+      // 更新body class (可選)
+      document.body.className = `lang-${lang}`;
+      currentLang = lang;
+    }
+
+    // 語言切換
+    const langToggle = document.getElementById('langToggle');
+    langToggle.addEventListener('click', () => {
+      const newLang = currentLang === 'zh' ? 'en' : 'zh';
+      applyLanguage(newLang);
+      langToggle.textContent = newLang === 'zh' ? '中 / EN' : 'EN / 中';
+    });
+
+    // 初始化 (預設中文)
+    applyLanguage('zh');
+
+    // 調整返回主頁鏈接確保路徑正確 (已寫在href)
+  })();
+</script>
+
+</body>
+</html>
