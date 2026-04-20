@@ -56,7 +56,7 @@
     }
     
     .section-content {
-      background: rgba(15, 20, 15, 0.75); backdrop-filter: blur(8px);
+      background: rgba(15, 20, 15, 0.85); backdrop-filter: blur(8px);
       border: 1px solid #444; border-radius: 24px; padding: 40px;
       width: 100%; max-width: 1100px; box-shadow: 0 10px 30px rgba(0,0,0,0.8);
     }
@@ -79,21 +79,23 @@
     /* 產品列表卡片 */
     .product-card {
       background: rgba(20, 20, 20, 0.8); border: 1px solid #444; border-radius: 12px; padding: 20px;
-      cursor: pointer; transition: all 0.2s; text-align: left;
+      cursor: pointer; transition: all 0.2s; text-align: left; display: flex; flex-direction: column; justify-content: center;
     }
-    .product-card:hover { border-color: #dbb07c; background: rgba(40, 40, 30, 0.9); }
+    .product-card:hover { border-color: #dbb07c; background: rgba(40, 40, 30, 0.9); transform: scale(1.02); }
     .product-card .brand { font-size: 0.9rem; color: #aaa; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
     .product-card .model { font-size: 1.3rem; color: white; font-weight: bold; }
 
     /* 產品詳情 */
     .detail-view { display: flex; gap: 40px; flex-wrap: wrap; }
-    .detail-image { flex: 1; min-width: 300px; }
-    .img-placeholder {
-      width: 100%; height: 350px; border-radius: 16px; background: linear-gradient(135deg, #222, #111);
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      border: 2px dashed #555; color: #777;
+    .detail-image { flex: 1; min-width: 300px; display: flex; align-items: center; justify-content: center; }
+    
+    /* 圖片的專屬樣式 */
+    .product-img {
+      width: 100%; max-height: 400px; object-fit: contain;
+      border-radius: 16px; background: rgba(255, 255, 255, 0.05); /* 微弱的白色背景，適合去背圖 */
+      padding: 20px; border: 1px solid #555; box-shadow: 0 8px 20px rgba(0,0,0,0.5);
     }
-    .img-placeholder .icon { font-size: 5rem; margin-bottom: 16px; }
+
     .detail-info { flex: 1; min-width: 300px; display: flex; flex-direction: column; justify-content: center; }
     .detail-info .brand { font-size: 1.2rem; color: #b98c5f; text-transform: uppercase; letter-spacing: 2px; }
     .detail-info .model { font-size: 2.8rem; margin: 8px 0 24px; color: white; font-weight: 800; line-height: 1.2; }
@@ -169,14 +171,14 @@
         page1_title: "裝備分類", page1_desc: "選擇一個裝備分類以查看推薦產品",
         page2_title: "推薦產品", page2_empty: "請先在上方選擇裝備分類",
         page3_title: "產品詳情", page3_empty: "請先在上方選擇產品",
-        btn_back: "← 返回列表", img_ph: "產品圖片準備中"
+        btn_back: "← 返回列表"
       },
       en: {
         nav_home: "🏔️ Home", nav_map: "🗺️ Map", nav_intro: "🧗 Categories", nav_gear: "🪢 Gear", nav_history: "📜 History",
         page1_title: "Gear Categories", page1_desc: "Select a category to view recommended products",
         page2_title: "Recommended Products", page2_empty: "Please select a category above",
         page3_title: "Product Detail", page3_empty: "Please select a product above",
-        btn_back: "← Back to List", img_ph: "Image coming soon"
+        btn_back: "← Back to List"
       }
     };
 
@@ -214,11 +216,7 @@
         products:[
           { brand: "Black Diamond", model: "Solution Guide", desc: { zh: "2025年最佳全能型安全吊帶，舒適的髖部支撐和出色的耐用性，無論是運動攀登、傳統攀登或多段路線都能勝任。", en: "Best all-around harness of 2025. Comfortable hip support and durability for sport, trad, or multi-pitch." } },
           { brand: "Black Diamond", model: "Momentum", desc: { zh: "價格親民、調節簡單的入門款，帶有加厚襯墊，適合室內外多種場景，是新手建立信心的好選擇。", en: "Affordable, easy-to-adjust entry model with thick padding. Great for indoors and outdoors, perfect for beginners." } },
-          { brand: "Petzl", model: "Corax LT", desc: { zh: "以其快速的調節系統和出色的通風性能，成為多段攀登和全用途的熱門選擇。", en: "Quick adjustment system and great ventilation make it a popular choice for multi-pitch and all-purpose climbing." } },
-          { brand: "Petzl", model: "Luna", desc: { zh: "專為女性設計的款式，在舒適度和貼合度上進行了優化，被評為2025年最佳女性安全吊帶。", en: "Women's specific design optimized for comfort and fit. Rated best women's harness in 2025." } },
-          { brand: "Petzl", model: "Avatar", desc: { zh: "以其通風網眼設計脫穎而出，重量僅480克，非常適合長時間攀登，可保持身體乾爽。", en: "Stands out with ventilated mesh design. Lightweight (480g), keeps you dry during long climbs." } },
-          { brand: "Arc'teryx", model: "FL-365", desc: { zh: "追求極致輕量的阿爾卑斯式攀登愛好者的首選，以驚人的重量控制和耐磨性能佔據優勢。", en: "Top choice for alpinists seeking extreme lightness, featuring amazing weight control and abrasion resistance." } },
-          { brand: "Mammut", model: "Sender", desc: { zh: "專為高難度「Project」路線設計，輕量化且舒適，讓你在反覆嘗試難關時減少束縛感。", en: "Designed for hard projecting. Lightweight and comfortable, reducing restriction during repeated attempts." } }
+          { brand: "Petzl", model: "Corax LT", desc: { zh: "以其快速的調節系統和出色的通風性能，成為多段攀登和全用途的熱門選擇。", en: "Quick adjustment system and great ventilation make it a popular choice for multi-pitch and all-purpose climbing." } },  
         ]
       },
       belay: {
@@ -226,8 +224,6 @@
         products:[
           { brand: "Petzl", model: "GriGri", desc: { zh: "最經典的輔助制動確保器，操作順暢、制動可靠，是許多經驗豐富攀岩者的首選，也是確保器界的黃金標準。", en: "Classic assisted-braking device. Smooth and reliable, the gold standard for experienced climbers." } },
           { brand: "Petzl", model: "GriGri+", desc: { zh: "GriGri的升級版，增加了「防驚慌手柄」和頂繩/先鋒模式切換功能，對新手和教學環境更友好、更安全。", en: "Upgraded GriGri with an anti-panic handle and top-rope/lead modes. Safer and more beginner-friendly." } },
-          { brand: "Petzl", model: "Neox", desc: { zh: "新一代輔助制動確保器，以極其順暢的給繩能力為特色，非常適合快節奏的先鋒攀登，能有效避免短繩問題。", en: "Next-gen assisted-braking. Extremely smooth slack feeding, perfect for fast-paced lead climbing." } },
-          { brand: "Black Diamond", model: "ATC-XP", desc: { zh: "最經典的管狀確保/下降器，經濟實惠、簡單可靠，適用範圍廣，是入門和預算有限的好選擇。", en: "Classic tubular device. Affordable, simple, and reliable for a wide range of uses. Great for beginners." } },
           { brand: "Black Diamond", model: "ATC-Guide", desc: { zh: "ATC系列的多用途版本，增加了在多段攀登中從上方確保的能力，是傳統攀岩和多段路線的理想夥伴。", en: "Multi-purpose ATC capable of belaying from above. Ideal companion for trad and multi-pitch routes." } },
           { brand: "Mammut", model: "Assist", desc: { zh: "2025年ISPO大獎得主，專為解決確保者與攀登者體重差異過大的問題而設計，能有效減少確保者被拉起的風險，最多可補償45公斤的體重差。", en: "ISPO Award 2025 winner. Compensates for weight differences up to 45kg, reducing the risk of the belayer being pulled up." } }
         ]
@@ -237,8 +233,6 @@
         products:[
           { brand: "Black Diamond", model: "Crag / 全指戶外手套", desc: { zh: "多功能全指手套，適用於攀岩、滑雪、騎行等多種戶外場景，採用透氣耐磨材質，兼顧保暖與靈活度。", en: "Versatile full-finger glove for climbing and outdoors. Breathable, durable, balancing warmth and flexibility." } },
           { brand: "Outdoor Research", model: "Splitter II", desc: { zh: "專為裂隙攀登設計的專業手套，手背和指關節處有耐磨保護層，能有效減少長時間塞手攀登時的疲勞感。", en: "Pro glove for crack climbing. Abrasion protection on knuckles reduces fatigue during jamming." } },
-          { brand: "Simond", model: "攀岩手套 (Climbing Glove)", desc: { zh: "迪卡儂旗下品牌，性價比極高，採用山羊皮掌面提供耐磨性，手背為透氣彈性面料，非常適合入門者使用。", en: "Decathlon brand with high value. Goat leather palm and breathable back, perfect for beginners." } },
-          { brand: "Hestra", model: "Climbers Duratan Short", desc: { zh: "來自瑞典的專業手套品牌，這款半指手套專為攀登設計，在耐用性和抓握力之間取得了很好的平衡，適合春秋季使用。", en: "Swedish pro brand. This half-finger glove is designed for climbing, balancing durability and grip perfectly." } }
         ]
       },
       rope: {
@@ -247,9 +241,6 @@
           { brand: "Mammut", model: "9.5 Crag Classic", desc: { zh: "被評為2025年最佳全能主繩，極其耐用、手感極佳，無論在岩館、戶外岩場或多段路線都有出色表現。", en: "Rated best all-around rope 2025. Highly durable with great handling for gym, crag, or multi-pitch." } },
           { brand: "Mammut", model: "Infinity 9.5 / 9.8", desc: { zh: "高性能主繩，手感順滑，耐用性強，適合運動和傳統攀登，是許多攀岩者的首選。", en: "High-performance rope, smooth handling, and durable. Top choice for sport and trad climbing." } },
           { brand: "Edelrid", model: "Boa Eco 9.8", desc: { zh: "2025年最佳先鋒攀登繩，環保生產，9.8mm的直徑在耐用性和重量之間取得了絕佳平衡。", en: "Best lead rope 2025, eco-friendly. The 9.8mm diameter strikes a great balance between durability and weight." } },
-          { brand: "Edelrid", model: "Tommy Caldwell Eco Dry 9.3", desc: { zh: "9.3mm的雙色繩，採用環保乾式處理，輕量化且適合多種攀登環境，尤其適合多段和傳統攀登。", en: "9.3mm bi-pattern rope with eco dry treatment. Lightweight, especially great for multi-pitch and trad." } },
-          { brand: "Sterling", model: "Velocity Xeros 9.8", desc: { zh: "被譽為「耐操的工作馬」，以極高的耐用性著稱，非常適合頻繁使用或在粗獷的岩壁上攀登。", en: "The 'workhorse' known for extreme durability. Perfect for heavy use or climbing on rough rock." } },
-          { brand: "Singing Rock", model: "GYM 9.8", desc: { zh: "專為岩館和攀岩學校設計的耐用型主繩，經過8次極限墜落測試，耐磨且順滑，是岩館訓練的理想選擇。", en: "Durable rope designed for gyms and schools. Survived 8 extreme fall tests, ideal for indoor training." } }
         ]
       }
     };
@@ -285,7 +276,7 @@
       renderProductList();
       renderProductDetail(); // 清空或顯示預設訊息
       document.getElementById('page2').scrollIntoView({ behavior: 'smooth' });
-      // 更新 URL
+      // 更新 URL 讓其能對應分享或跳轉
       window.history.replaceState({}, '', `?type=${key}`);
     }
 
@@ -328,17 +319,12 @@
       }
       
       const prod = gearData[activeCat].products[activeProdIdx];
-      const icon = gearData[activeCat].icon;
       const backText = langDict[currentLang].btn_back;
-      const imgPhText = langDict[currentLang].img_ph;
 
       productDetailArea.innerHTML = `
         <div class="detail-view">
           <div class="detail-image">
-            <div class="img-placeholder">
-              <div class="icon">${icon}</div>
-              <div>${imgPhText}</div>
-            </div>
+            <img src="../image/${prod.model}.png" alt="${prod.model}" class="product-img">
           </div>
           <div class="detail-info">
             <div class="brand">${prod.brand}</div>
@@ -381,7 +367,7 @@
     applyLanguage(currentLang);
     langToggle.textContent = currentLang === 'zh' ? '中 / EN' : 'EN / 中';
 
-    // 檢查 URL 參數以自動跳轉
+    // 檢查 URL 參數以決定是否自動跳轉 (從主頁點擊進入時)
     const urlParams = new URLSearchParams(window.location.search);
     const typeParam = urlParams.get('type');
     if (typeParam && gearData[typeParam]) {
