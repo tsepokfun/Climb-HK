@@ -4,168 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>攀 · 香港</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
-    body {
-      background-color: black;
-      color: white;
-      font-family: system-ui, -apple-system, 'Helvetica Neue', 'Noto Sans HK', sans-serif;
-      overflow-x: hidden;
-    }
-
-    /* 頂欄 */
-    .top-bar {
-      position: fixed; top: 0; left: 0; width: 100%; height: 64px;
-      background-color: black; color: white; display: flex;
-      align-items: center; justify-content: space-between;
-      padding: 0 24px; z-index: 100; border-bottom: 1px solid #333;
-    }
-    .menu-area { position: relative; }
-    .menu-dots {
-      font-size: 28px; line-height: 1; cursor: pointer;
-      letter-spacing: 2px; user-select: none; padding: 8px 0; color: white;
-    }
-    .nav-dropdown {
-      position: absolute; top: 50px; left: -10px;
-      background: rgba(20, 20, 20, 0.95); backdrop-filter: blur(8px);
-      border: 1px solid #555; border-radius: 12px; padding: 12px 0;
-      min-width: 180px; display: none; flex-direction: column;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.6); z-index: 120;
-    }
-    .nav-dropdown.active { display: flex; }
-    .nav-item {
-      padding: 12px 24px; color: #f0f0e0; font-size: 1.1rem; text-decoration: none;
-      cursor: pointer; transition: background 0.2s; white-space: nowrap;
-    }
-    .nav-item:hover { background: #3a5a3a; color: white; }
-    .site-title { font-weight: 600; font-size: 1.4rem; letter-spacing: 2px; }
-    .lang-switch {
-      background: #2a2a2a; color: #ddd; border: 1px solid #777;
-      padding: 6px 14px; border-radius: 30px; font-size: 1rem;
-      font-weight: bold; cursor: pointer; transition: 0.2s; user-select: none;
-    }
-    .lang-switch:hover { background: #4a6a4a; color: white; border-color: #aaa; }
-
-    /* 繩索進度條 */
-    .rope-progress {
-      position: fixed; right: 20px; top: 100px; bottom: 100px;
-      width: 12px; z-index: 90; display: flex; flex-direction: column;
-      align-items: center; pointer-events: none;
-    }
-    .rope-line {
-      width: 4px; height: 100%;
-      background: repeating-linear-gradient(45deg, #b98c5f, #b98c5f 6px, #8b6914 6px, #8b6914 12px);
-      border-radius: 4px; box-shadow: 0 0 6px rgba(0,0,0,0.5); position: relative;
-    }
-    .climber-icon {
-      position: absolute; left: 50%; transform: translateX(-50%);
-      width: 28px; height: 28px; background-color: #d94f4f;
-      border-radius: 45% 45% 40% 40%; box-shadow: 0 2px 6px black;
-      border: 2px solid #f0c0a0; transition: top 0.05s linear;
-      pointer-events: none; display: flex; align-items: center; justify-content: center;
-    }
-    .climber-icon::after { content: "🧗"; font-size: 16px; line-height: 1; filter: drop-shadow(0 1px 1px black); }
-
-    /* 滾動容器 */
-    .scroll-container { position: relative; z-index: 1; }
-    .section {
-      min-height: 100vh; width: 100%; position: relative;
-      display: flex; flex-direction: column; align-items: center;
-      justify-content: center; padding: 80px 5% 60px;
-      scroll-snap-align: start; transition: opacity 0.3s ease;
-      background-size: cover; background-position: center;
-      background-repeat: no-repeat; background-attachment: fixed;
-    }
-    .hero-section {
-      background-image: url('image/LionM.jpg');
-      background-size: cover; background-position: center 30%; position: relative;
-    }
-    .hero-section::before {
-      content: ""; position: absolute; inset: 0;
-      background: rgba(255, 255, 255, 0.4); backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px); z-index: 0;
-    }
-    .bg-climb-route {
-      background-image: url('image/ClimbingRoute.png');
-      background-size: cover; background-position: 30% 20%;
-      background-attachment: fixed; position: relative;
-    }
-    .bg-climb-route::after {
-      content: ""; position: absolute; inset: 0;
-      background: rgba(255, 255, 255, 0.25); backdrop-filter: blur(2px);
-      -webkit-backdrop-filter: blur(2px); pointer-events: none; z-index: 0;
-    }
-    .section > * { position: relative; z-index: 2; }
-
-    /* 主頁標題圖片 */
-    .hero-title { display: flex; align-items: center; justify-content: center; gap: 30px; width: 100%; flex-wrap: wrap; }
-    .hero-img-pan { height: auto; width: 35vw; max-width: 400px; min-width: 200px; filter: drop-shadow(8px 8px 12px rgba(20,40,10,0.5)); }
-    .hero-img-hk { display: flex; flex-direction: column; align-items: center; writing-mode: vertical-rl; text-orientation: upright; }
-    .hero-img-hk img { width: 15vw; max-width: 160px; min-width: 80px; filter: drop-shadow(6px 6px 8px rgba(0,30,0,0.4)); }
-    .scroll-hint {
-      position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
-      color: #aaa; font-size: 1.2rem; display: flex; flex-direction: column;
-      align-items: center; opacity: 0.8; transition: opacity 0.3s; z-index: 10;
-    }
-    .scroll-hint span { font-size: 2rem; line-height: 1; }
-
-    .map-container {
-      width: 90%; max-width: 1000px; background: rgba(10,20,15,0.3);
-      backdrop-filter: blur(4px); padding: 20px; border-radius: 28px;
-      cursor: pointer; box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-    }
-    .map-container:hover { transform: scale(1.01); }
-
-    .intro-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; max-width: 1000px; width: 100%; }
-    .intro-card {
-      aspect-ratio: 4 / 3; border-radius: 32px; background-size: cover;
-      background-position: center; cursor: pointer; transition: 0.2s;
-      box-shadow: 0 8px 18px black; display: flex; align-items: flex-end;
-      justify-content: center; padding-bottom: 20px; font-size: 2rem;
-      font-weight: bold; color: white; text-shadow: 2px 2px 8px black;
-      border: 2px solid rgba(255,255,240,0.3); position: relative; overflow: hidden;
-    }
-    .intro-card::before {
-      content: ""; position: absolute; inset: 0;
-      background: linear-gradient(to top, rgba(0,0,0,0.5), transparent); z-index: 1;
-    }
-    .intro-card span {
-      position: relative; z-index: 2; backdrop-filter: blur(2px);
-      padding: 4px 16px; border-radius: 40px; background: rgba(20,30,20,0.5);
-    }
-    .intro-card:hover { transform: scale(1.02); border-color: #b0b080; }
-
-    .gear-wrapper { display: flex; flex-direction: column; align-items: center; width: 100%; }
-    .gear-canvas-box {
-      background: rgba(30,40,30,0.4); backdrop-filter: blur(4px);
-      padding: 20px; border-radius: 40px; display: inline-block;
-      width: 100%; max-width: 1000px;
-    }
-    canvas#gearCanvas {
-      display: block; width: 100%; height: auto; border-radius: 24px;
-      cursor: pointer; transition: transform 0.15s ease-out; will-change: transform;
-    }
-    .gear-hint { margin-top: 16px; color: #ccc; }
-
-    .history-section { cursor: pointer; }
-    .history-placeholder {
-      font-size: 3rem; font-weight: 300; border: 2px dashed #b0b0a0;
-      padding: 30px 60px; background: rgba(20,20,10,0.5); backdrop-filter: blur(6px);
-      text-align: center;
-    }
-    .footer-bar { background: black; color: #aaa; padding: 24px 10%; text-align: center; font-size: 0.9rem; border-top: 1px solid #3a3a3a; }
-    .footer-bar a { color: #ccc; text-decoration: none; margin: 0 12px; }
-    .fade-section { transition: opacity 0.4s; }
-    .section-title { font-size: 2.8rem; margin-bottom: 32px; text-shadow: 2px 2px 8px black; }
-
-    @media (max-width: 600px) {
-      .intro-grid { grid-template-columns: 1fr; }
-      .hero-img-pan { width: 60vw; }
-      .hero-img-hk img { width: 20vw; }
-      .section-title { font-size: 2.2rem; }
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -206,9 +45,16 @@
 
   <section class="section bg-climb-route fade-section" id="sectionMap">
     <h2 class="section-title" data-lang-key="map_title">🧗 攀石好去處</h2>
-    <div class="map-container" id="mapClickArea">
-      <img src="image/map.jpg" alt="HK Map" style="width: 100%; height: auto; border-radius: 16px; display: block;">
+    <div class="map-container" id="mapClickArea" style="height: 400px; padding: 0; position: relative; overflow: hidden; border-radius: 28px;">
+      <div id="home-map" style="width: 100%; height: 100%;"></div>
+      <div style="position: absolute; inset: 0; z-index: 10; cursor: pointer;" id="homeMapOverlay"></div>
     </div>
+    <p style="margin-top: 20px; opacity:0.9;" data-lang-key="map_click">點擊地圖進入搜尋頁面</p>
+  </section>  <section class="section bg-climb-route fade-section" id="sectionMap">
+    <h2 class="section-title" data-lang-key="map_title">🧗 攀石好去處</h2>
+      <div id="map-area">
+          <div id="map-inner" style="width: 100%; height: 100%; min-height: 500px;"></div>
+      </div>
     <p style="margin-top: 20px; opacity:0.9;" data-lang-key="map_click">點擊地圖進入搜尋頁面</p>
   </section>
 
@@ -246,6 +92,64 @@
 </footer>
 
 <script>
+  // 簡化的攀岩點資料 (與 map.html 保持同步)
+  const spots = [
+      { id: 1, typeCode: 'NB', lat: 22.213, lng: 114.200 },
+      { id: 2, typeCode: 'NB', lat: 22.228, lng: 114.251 },
+      { id: 3, typeCode: 'NB', lat: 22.245, lng: 114.290 },
+      { id: 4, typeCode: 'NB', lat: 22.200, lng: 114.130 },
+      { id: 5, typeCode: 'AB', lat: 22.335, lng: 114.198 },
+      { id: 6, typeCode: 'AB', lat: 22.292, lng: 114.207 },
+      { id: 7, typeCode: 'AB', lat: 22.385, lng: 114.195 },
+      { id: 8, typeCode: 'AB', lat: 22.328, lng: 114.163 },
+      { id: 9, typeCode: 'NC', lat: 22.230, lng: 114.250 },
+      { id: 10, typeCode: 'NC', lat: 22.247, lng: 114.288 },
+      { id: 11, typeCode: 'NC', lat: 22.345, lng: 114.165 },
+      { id: 12, typeCode: 'NC', lat: 22.352, lng: 114.185 },
+      { id: 13, typeCode: 'NC', lat: 22.272, lng: 114.155 },
+      { id: 14, typeCode: 'AC', lat: 22.321, lng: 114.195 },
+      { id: 15, typeCode: 'AC', lat: 22.320, lng: 114.160 }
+  ];
+
+  // 取得對應分類顏色的輔助函數
+  function getCategoryColor(typeCode) {
+      const colors = { 'NB': '#3a5a3a', 'AB': '#2d5a7b', 'NC': '#8a5a3a', 'AC': '#5a3a7b' };
+      return colors[typeCode] || '#ff0000';
+  }
+
+  // 初始化主頁地圖 (唯讀預覽模式 + 顯示標記)
+  window.initHomeMap = function() {
+      const homeMap = new google.maps.Map(document.getElementById('home-map'), {
+          center: { lat: 22.31, lng: 114.18 }, // 香港中心
+          zoom: 11,
+          mapTypeId: 'satellite', // 衛星圖
+          tilt: 45,               // 3D 傾斜
+          disableDefaultUI: true, // 隱藏所有控制項
+          gestureHandling: 'none' // 禁止使用者拖動
+      });
+
+      // 在主頁地圖上畫出所有標記
+      spots.forEach(spot => {
+          new google.maps.Marker({
+              position: { lat: spot.lat, lng: spot.lng },
+              map: homeMap,
+              icon: {
+                  path: google.maps.SymbolPath.CIRCLE,
+                  fillColor: getCategoryColor(spot.typeCode),
+                  fillOpacity: 0.9,
+                  strokeColor: 'white',
+                  strokeWeight: 2,
+                  scale: 6 // 主頁的點稍微小一點
+              }
+          });
+      });
+  };
+
+  // 確保覆蓋層點擊後跳轉至 map.html
+  document.getElementById('homeMapOverlay').addEventListener('click', () => { 
+      window.location.href = 'Map/map.html'; 
+  });
+  
   (function(){
     "use strict";
 
@@ -480,5 +384,9 @@
 
   })();
 </script>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDPx9XDTysD9oC4QKhVQg707BPuGK3c5HY&callback=initHomeMap" async defer></script>
+
+
 </body>
 </html>

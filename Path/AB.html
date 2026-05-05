@@ -4,41 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>人工抱石 · 攀·香港</title>
-  <style>
-    * { margin:0; padding:0; box-sizing:border-box; }
-    body { background:black; color:white; font-family:system-ui, 'Noto Sans HK', sans-serif; min-height:100vh; display:flex; flex-direction:column; }
-    body::before { content:""; position:fixed; inset:0; background:url('../image/ClimbingRoute.png') center/cover; opacity:0.8; z-index:0; pointer-events:none; }
-    
-    .top-bar { position:fixed; top:0; left:0; width:100%; height:64px; background:black; color:white; display:flex; align-items:center; justify-content:space-between; padding:0 24px; z-index:200; border-bottom:1px solid #333; }
-    .menu-area { position: relative; }
-    .menu-dots { font-size: 28px; line-height: 1; cursor: pointer; letter-spacing: 2px; user-select: none; padding: 8px 0; color: white; }
-    .nav-dropdown { position: absolute; top: 50px; left: -10px; background: rgba(20, 20, 20, 0.95); backdrop-filter: blur(8px); border: 1px solid #555; border-radius: 12px; padding: 12px 0; min-width: 180px; display: none; flex-direction: column; box-shadow: 0 8px 20px rgba(0,0,0,0.6); z-index: 220; }
-    .nav-dropdown.active { display: flex; }
-    .nav-item { padding: 12px 24px; color: #f0f0e0; font-size: 1.1rem; text-decoration: none; cursor: pointer; transition: background 0.2s; white-space: nowrap; }
-    .nav-item:hover { background: #3a5a3a; color: white; }
-    .site-title { font-weight:600; font-size:1.4rem; letter-spacing: 2px; }
-    .lang-switch { background:#2a2a2a; color:#ddd; border:1px solid #777; padding:6px 14px; border-radius:30px; font-weight:bold; cursor:pointer; font-size: 1rem; transition: 0.2s; user-select: none;}
-    .lang-switch:hover { background: #4a6a4a; color: white; border-color: #aaa; }
-
-    .main-content { margin-top:64px; padding:40px 24px 60px; max-width:1100px; margin-left:auto; margin-right:auto; width:100%; position:relative; z-index:2; background:rgba(0,0,0,0.6); backdrop-filter:blur(3px); min-height:calc(100vh - 64px); }
-    h1 { font-size:3rem; border-left:6px solid #b98c5f; padding-left:20px; margin-bottom:16px; }
-    h2 { font-size:2rem; margin:40px 0 16px; color:#dbb07c; }
-    h3 { font-size:1.5rem; margin:24px 0 12px; color:#c0b090; }
-    p, li { line-height:1.7; color:#eee; }
-    ul, ol { padding-left:24px; margin:16px 0; }
-    table { width:100%; border-collapse:collapse; margin:24px 0; background:rgba(0,0,0,0.3); }
-    th, td { padding:12px; border:1px solid #5a6a5a; text-align:left; }
-    th { background:#3a5a3a; }
-    .questionnaire { background:rgba(20,30,20,0.9); padding:32px; border-radius:24px; margin-top:48px; border:1px solid #6a8a6a; }
-    .form-group { margin-bottom:20px; }
-    label { display:block; margin-bottom:6px; color:#ccc; }
-    input, select, textarea { width:100%; padding:12px; background:#1a1a1a; border:1px solid #555; color:white; border-radius:8px; font-size:1rem; }
-    button { background:#b98c5f; color:black; font-weight:bold; padding:12px 28px; border:none; border-radius:40px; cursor:pointer; font-size:1.1rem; }
-    .footer-note { margin-top:32px; opacity:0.7; }
-    @media (max-width:600px) { h1 { font-size:2.2rem; } }
-  </style>
+  <link rel="stylesheet" href="../style.css">
 </head>
-<body>
+<body class="with-bg">
 <header class="top-bar">
   <div class="menu-area">
     <div class="menu-dots" id="menuToggle">⋯</div>
