@@ -1,6 +1,6 @@
 # 任务表:香港攀岩点地图 — 难度筛选 + 全量数据与维护方案
 
-- 版本:v2
+- 版本:v3
 - 日期:2026-09-08
 - 对应 PRD:`docs/design/prd-2026-09-08-map-grade-filter-hk-spots.md`
 - 代码注释用英文;文档用中文。
@@ -18,7 +18,7 @@
 - **文件**:`js/spots-data.js`、`js/grades.js`、`js/filter.js`、`package.json`、`tests/spots-data.test.mjs`、`tests/grades.test.mjs`、`tests/filter.test.mjs`
 - **工作**:新建 UMD 风格模块 `js/spots-data.js`(含现有 15 点,难度改为结构化 `grades` 字段,展示文案由结构化字段生成且与原文一致);`js/grades.js` 提供 V 级/法国级解析与区间判定纯函数;`js/filter.js` 提供「难度 + 类型 + 关键词」AND 组合谓词;`package.json` 提供 `test` 与 `validate` 脚本占位。
 - **DoD(验收标准)**:
-  1. `node --test tests/` 全绿(即 `npm test` 全绿),且工程师报告展示「测试先红后绿」的证据。
+  1. `npm test`(即 `node --test tests/*.test.mjs`;Windows 上 `node --test tests/` 不可用,已实测)全绿,且工程师报告展示「测试先红后绿」的证据。
   2. 现有 15 个点迁移后字段齐全(id/typeCode/lat/lng/grades/name/desc/trans/gmap),双语文案与原文一致。
   3. `js/spots-data.js` 在 Node(`import`)与浏览器全局(用 `node:vm` 模拟 `<script>` 加载)两种方式都能取到同一份数据(有测试覆盖)。
   4. 难度解析测试覆盖:VB、V0–V14、"+" 后缀、区间包含判定(含 V7+ 区间视为包含 V7 档);法国级 F4–F8B+ 解析;`Top Rope` 等无结构化难度 → `grades: null`。
@@ -61,7 +61,7 @@
 
 - **Milestone**:M2
 - **Shape**:solo
-- **文件**:`js/spots-data.js`、`data/thecrag-hk-areas-snapshot.json`、`data/hk-areas-catalog-draft.md`(清单草稿,输入并随入库校准)
+- **文件**:`js/spots-data.js`、`tests/spots-data.test.mjs`(点数/唯一性断言随全量数据同步更新)、`data/thecrag-hk-areas-snapshot.json`、`data/hk-areas-catalog-draft.md`(清单草稿,输入,无需修改)
 - **依赖**:与 T-01 共享 `js/spots-data.js`,必须串行(T-01 完成后开始)。
 - **工作**:以 theCrag 香港区为基准清单、hongkongclimbing.com 指南为复核,人工整理香港主要攀岩区域(含室内馆),全量写入 `js/spots-data.js`;生成 `data/thecrag-hk-areas-snapshot.json`(名称 + 来源 URL,事实性字段);每点补 `source` 字段;描述/交通文案自撰双语,不复制受版权文本。
 - **DoD(验收标准)**:

@@ -1,8 +1,8 @@
 # PRD:香港攀岩点地图 — 难度筛选 + 全量数据与维护方案
 
-- 版本:v2
+- 版本:v3
 - 日期:2026-09-08
-- 状态:已确认(v1 于 2026-09-08 由用户确认;v2 为修正版,修正明细见文末「修正记录」)
+- 状态:已确认(v1 于 2026-09-08 由用户确认;v2/v3 为修正版,修正明细见文末「修正记录」)
 - 语言:本文档用中文;代码注释用英文;站点界面文案维持中英双语
 
 ## 1. 背景与问题(Problem,不是方案)
@@ -47,7 +47,7 @@
 - **运行方式不变**:纯静态,无构建,不新增任何运行时依赖(Google Maps JS API 为既有依赖)。
 - **新增零依赖 Node 工具链**:Node v22.18.0(已实测),测试用 Node 内置 `node --test`,不引入任何 npm 包,无需 `npm install`。
 - **数据文件用 JS 模块而非 JSON**:因为用户可能以 `file://` 直接打开页面,浏览器会拦截 `fetch` 本地 JSON,而 `<script src>` 不受影响。导出用 UMD 风格:浏览器得到全局变量、Node 测试可 `import`。
-- **测试命令**:`npm test`(= `node --test tests/`);**数据校验命令**:`npm run validate`;QA 用例用 `node qa/run-all.mjs`(Windows 友好,不用 bash)。
+- **测试命令**:`npm test`(= `node --test tests/*.test.mjs`;Windows 实测 `node --test tests/` 会把目录当模块加载而报错,故用 glob 写法);**数据校验命令**:`npm run validate`;QA 用例用 `node qa/run-all.mjs`(Windows 友好,不用 bash)。
 
 ## 5. 功能需求
 
@@ -136,3 +136,5 @@
 - 2026-09-08(v2):现状 diff 示例补全实际出现的 F2B、F7C+、Top Rope/Lead。
 - 2026-09-08(v2):F-3 修正 index.html 的脚本引用路径为 `js/spots-data.js`(首页位于根目录)。
 - 2026-09-08(v2):任务表表头补「代码注释用英文」;T-01 DoD 补明「V7+ 区间视为包含 V7 档」。
+- 2026-09-08(v3):测试命令实测修正——Windows 上 `node --test tests/` 报 Cannot find module,实际可用命令为 `node --test tests/*.test.mjs`(package.json 已按此配置,工程师实测 34/34 通过)。
+- 2026-09-08(v3):任务表 T-04 文件清单补入 `tests/spots-data.test.mjs`(全量数据会改变点数断言,该测试需随数据同步更新)。
