@@ -41,7 +41,7 @@
       }
 
       if (searchTerm) {
-        var haystack = (spot.name.zh + ' ' + spot.name.en + ' ' + difficultyText(spot)).toLowerCase();
+        var haystack = (spot.name.zh + ' ' + spot.name.en + ' ' + spot.desc.zh + ' ' + spot.desc.en + ' ' + spot.trans.zh + ' ' + spot.trans.en + ' ' + difficultyText(spot)).toLowerCase();
         if (haystack.indexOf(searchTerm) === -1) return false;
       }
 
