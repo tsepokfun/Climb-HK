@@ -61,7 +61,7 @@
 
 - **Milestone**:M2
 - **Shape**:solo
-- **文件**:`js/spots-data.js`、`data/thecrag-hk-areas-snapshot.json`
+- **文件**:`js/spots-data.js`、`data/thecrag-hk-areas-snapshot.json`、`data/hk-areas-catalog-draft.md`(清单草稿,输入并随入库校准)
 - **依赖**:与 T-01 共享 `js/spots-data.js`,必须串行(T-01 完成后开始)。
 - **工作**:以 theCrag 香港区为基准清单、hongkongclimbing.com 指南为复核,人工整理香港主要攀岩区域(含室内馆),全量写入 `js/spots-data.js`;生成 `data/thecrag-hk-areas-snapshot.json`(名称 + 来源 URL,事实性字段);每点补 `source` 字段;描述/交通文案自撰双语,不复制受版权文本。
 - **DoD(验收标准)**:
