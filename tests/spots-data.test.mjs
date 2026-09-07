@@ -93,13 +93,13 @@ const expectedGrades = [
   null
 ];
 
-test('spots-data has exactly 15 spots', () => {
-  assert.equal(spots.length, 15);
+test('spots-data has at least 30 spots', () => {
+  assert.ok(spots.length >= 30, 'expected >= 30 spots, got ' + spots.length);
 });
 
 test('spot ids are unique', () => {
   const ids = spots.map((s) => s.id);
-  assert.equal(new Set(ids).size, 15);
+  assert.equal(new Set(ids).size, spots.length);
 });
 
 test('every spot has the full required field set', () => {
@@ -122,7 +122,7 @@ test('every spot has the full required field set', () => {
 });
 
 test('bilingual text matches the original HTML verbatim', () => {
-  spots.forEach((s, i) => {
+  spots.slice(0, 15).forEach((s, i) => {
     assert.equal(s.name.zh, expectedNames[i][0], 'name.zh #' + i);
     assert.equal(s.name.en, expectedNames[i][1], 'name.en #' + i);
     assert.equal(s.desc.zh, expectedDescs[i][0], 'desc.zh #' + i);
@@ -133,11 +133,11 @@ test('bilingual text matches the original HTML verbatim', () => {
 });
 
 test('type codes match the original classification', () => {
-  spots.forEach((s, i) => assert.equal(s.typeCode, expectedTypeCodes[i], 'typeCode #' + i));
+  spots.slice(0, 15).forEach((s, i) => assert.equal(s.typeCode, expectedTypeCodes[i], 'typeCode #' + i));
 });
 
 test('grades structure matches the original diff', () => {
-  spots.forEach((s, i) => assert.deepEqual(s.grades, expectedGrades[i], 'grades #' + i));
+  spots.slice(0, 15).forEach((s, i) => assert.deepEqual(s.grades, expectedGrades[i], 'grades #' + i));
 });
 
 test('formatGrade reproduces the original diff text', () => {
@@ -147,8 +147,8 @@ test('formatGrade reproduces the original diff text', () => {
   assert.equal(formatGrade(null), null);
 });
 
-test('gradeText equals the original diff for every spot', () => {
-  spots.forEach((s, i) => {
+test('gradeText equals the original diff for the first 15 spots', () => {
+  spots.slice(0, 15).forEach((s, i) => {
     assert.equal(gradeText(s), expectedDiffs[i], 'diff #' + i);
   });
 });
