@@ -26,6 +26,37 @@
             border-color: #dbb07c;
         }
     </style>
+    <style>
+        /* 難度篩選行樣式 (頁面級,不修改 style.css) */
+        .grade-filters {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            flex-basis: 100%;
+            margin-top: 4px;
+        }
+        .grade-label {
+            color: #ddd;
+            font-size: 13px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+        .grade-btn {
+            border: 1px solid #444;
+            padding: 6px 10px;
+            border-radius: 16px;
+            cursor: pointer;
+            color: #ddd;
+            font-weight: bold;
+            font-size: 12px;
+            transition: all 0.3s;
+            background: transparent;
+            line-height: 1;
+        }
+        .grade-btn:hover { transform: translateY(-2px); }
+        .grade-btn.active { color: white; border-color: white; background-color: #555; }
+    </style>
 </head>
 <body class="with-bg map-page">
 
@@ -55,6 +86,10 @@
             <button class="filter-btn btn-nc" onclick="filterSpots('NC', event)" data-lang-key="f_nc">天然攀登</button>
             <button class="filter-btn btn-ac" onclick="filterSpots('AC', event)" data-lang-key="f_ac">人工攀登</button>
         </div>
+        <div class="grade-filters">
+            <span class="grade-label" data-lang-key="p_grade">難度</span>
+            <button class="grade-btn active" onclick="filterGrade(null, event)" data-lang-key="grade_all">全部</button>
+        </div>
     </div>
 
     <div class="container">
@@ -63,6 +98,10 @@
         </div>
         <div id="sidebar"></div>
     </div>
+
+    <script src="../js/spots-data.js"></script>
+    <script src="../js/grades.js"></script>
+    <script src="../js/filter.js"></script>
 
     <script>
         // ---------- 1. 多語言 dictionary (新增 Google Map 按鈕文字) ----------
@@ -73,6 +112,7 @@
                 search_ph: '搜尋地點、難度或簡介...',
                 f_all: '顯示全部', f_nb: '天然抱石', f_ab: '人工抱石', f_nc: '天然攀登', f_ac: '人工攀登',
                 p_type: '類型：', p_diff: '難度：', p_desc: '簡介：', p_trans: '交通：',
+                p_grade: '難度', grade_all: '全部',
                 gmap_btn: '📍 開啟 Google Maps'
             },
             en: {
@@ -81,6 +121,7 @@
                 search_ph: 'Search spots, difficulty, or info...',
                 f_all: 'All', f_nb: 'Outdoor Boulder', f_ab: 'Gym Boulder', f_nc: 'Outdoor Climb', f_ac: 'Gym Climb',
                 p_type: 'Type: ', p_diff: 'Grade: ', p_desc: 'Info: ', p_trans: 'Transport: ',
+                p_grade: 'Grade', grade_all: 'All',
                 gmap_btn: '📍 Open in Google Maps'
             }
         };
@@ -99,32 +140,34 @@
             'AC': { color: '#5a3a7b', zh: '人工攀登', en: 'Gym Climbing' }
         };
 
-        // ---------- 4. 攀岩點資料庫 (加入精準的 Google Maps 連結) ----------
-        const spots = [
-            { id: 1, typeCode: 'NB', lat: 22.213, lng: 114.200, diff: "VB - V12", name: { zh: "舂坎角", en: "Chung Hom Kok" }, desc: { zh: "約97條路線，花崗岩。路況包括手足並用的攀爬石壁。", en: "Around 97 routes on granite. Includes scrambling sections." }, trans: { zh: "中環乘6X等巴士至舂坎角道", en: "Bus 6X from Central to Chung Hom Kok Rd" }, gmap: "https://www.google.com/maps/search/?api=1&query=22.213,114.200" },
-            { id: 2, typeCode: 'NB', lat: 22.228, lng: 114.251, diff: "VB - V12+", name: { zh: "石澳 - 抱石區", en: "Shek O - Bouldering" }, desc: { zh: "約143條路線。大頭洲「九宮格」是馳名攀石地。", en: "143 routes. Tai Tau Chau is famous for its intricate rock textures." }, trans: { zh: "筲箕灣乘9號巴士", en: "Bus 9 from Shau Kei Wan" }, gmap: "https://www.google.com/maps/search/?api=1&query=22.228,114.251" },
-            { id: 3, typeCode: 'NB', lat: 22.245, lng: 114.290, diff: "VB - V12", name: { zh: "東龍洲 - 抱石", en: "Tung Lung Chau - Boulder" }, desc: { zh: "東海岸佈滿懸崖峭壁，表面粗糙，摩擦力極佳。", en: "East coast cliffs with excellent rough friction." }, trans: { zh: "西灣河/三家村乘街渡", en: "Ferry from Sai Wan Ho / Sam Ka Tsuen" }, gmap: "https://www.google.com/maps/search/?api=1&query=22.245,114.290" },
-            { id: 4, typeCode: 'NB', lat: 22.200, lng: 114.130, diff: "VB - V10", name: { zh: "南丫島", en: "Lamma Island" }, desc: { zh: "山地塘一帶有多處天然抱石，如月老石等。", en: "Multiple natural boulders around Mount Stenhouse." }, trans: { zh: "中環4號碼頭乘渡輪", en: "Ferry from Central Pier 4" }, gmap: "https://www.google.com/maps/search/?api=1&query=22.200,114.130" },
-            { id: 5, typeCode: 'AB', lat: 22.335, lng: 114.198, diff: "V0 - V10", name: { zh: "JUST CLIMB (新蒲崗店)", en: "JUST CLIMB (San Po Kong)" }, desc: { zh: "超過100條路線，分4大程度12級難度。", en: "Over 100 routes divided into 12 difficulty levels." }, trans: { zh: "新蒲崗", en: "San Po Kong" }, gmap: "https://www.google.com/maps/search/?api=1&query=22.335,114.198" },
-            { id: 6, typeCode: 'AB', lat: 22.292, lng: 114.207, diff: "V0 - V7", name: { zh: "Verm City (鰂魚涌)", en: "Verm City (Quarry Bay)" }, desc: { zh: "香港最大抱石場地逾1.8萬呎，設4.5米高牆。", en: "HK's largest gym (18k sq.ft) with 4.5m walls." }, trans: { zh: "鰂魚涌渣華道", en: "Java Road, Quarry Bay" }, gmap: "https://www.google.com/maps/search/?api=1&query=22.292,114.207" },
-            { id: 7, typeCode: 'AB', lat: 22.385, lng: 114.195, diff: "V0 - V7+", name: { zh: "HK Climbing Park (沙田)", en: "HK Climbing Park (Shatin)" }, desc: { zh: "高達4.5米的室內抱石區域，多達50條抱石路線。", en: "4.5m tall walls with up to 50 bouldering routes." }, trans: { zh: "沙田富豪花園", en: "Belair Gardens, Shatin" }, gmap: "https://www.google.com/maps/search/?api=1&query=22.385,114.195" },
-            { id: 8, typeCode: 'AB', lat: 22.328, lng: 114.163, diff: "V0 - V7", name: { zh: "尚山岩館 (深水埗)", en: "Crux (Sham Shui Po)" }, desc: { zh: "以動物主題分級，設有人氣訓練板Moonboard。", en: "Animal-themed grading, features a Moonboard." }, trans: { zh: "深水埗大南街", en: "Tai Nan Street, Sham Shui Po" }, gmap: "https://www.google.com/maps/search/?api=1&query=22.328,114.163" },
-            { id: 9, typeCode: 'NC', lat: 22.230, lng: 114.250, diff: "F4 - F8A+", name: { zh: "石澳 - 運動攀登", en: "Shek O - Sport Climbing" }, desc: { zh: "包含日落隙及技術牆，考驗力量與平衡。", en: "Includes Sunset Crack and Tech Wall, testing power & balance." }, trans: { zh: "筲箕灣乘9號巴士", en: "Bus 9 from Shau Kei Wan" }, gmap: "https://www.google.com/maps/search/?api=1&query=22.230,114.250" },
-            { id: 10, typeCode: 'NC', lat: 22.247, lng: 114.288, diff: "F4 - F8A+", name: { zh: "東龍洲 - 攀登", en: "Tung Lung Chau - Climbing" }, desc: { zh: "崖下海浪咆哮，極具挑戰性的海溝及巨牆。", en: "Challenging sea cliff walls and gullies above crashing waves." }, trans: { zh: "乘街渡前往", en: "Ferry from Sai Wan Ho" }, gmap: "https://www.google.com/maps/search/?api=1&query=22.247,114.288" },
-            { id: 11, typeCode: 'NC', lat: 22.345, lng: 114.165, diff: "F2B - F8B", name: { zh: "畢架山", en: "Beacon Hill" }, desc: { zh: "花崗岩表面粗糙，擁有超過60條路線。", en: "Rough granite surface with over 60 routes." }, trans: { zh: "石硤尾轉乘32M小巴", en: "Minibus 32M from Shek Kip Mei" }, gmap: "https://www.google.com/maps/search/?api=1&query=22.345,114.165" },
-            { id: 12, typeCode: 'NC', lat: 22.352, lng: 114.185, diff: "F5 - F7C+", name: { zh: "獅子山", en: "Lion Rock" }, desc: { zh: "經典多繩距路線「鬼佬」是必爬路線，可俯瞰維港。", en: "Classic multi-pitch 'Gweilo' overlooking Victoria Harbour." }, trans: { zh: "慈雲山徒步上山", en: "Hike up from Tsz Wan Shan" }, gmap: "https://www.google.com/maps/search/?api=1&query=22.352,114.185" },
-            { id: 13, typeCode: 'NC', lat: 22.272, lng: 114.155, diff: "F4 - F7B", name: { zh: "中環岩壁", en: "Central Crags" }, desc: { zh: "約109條路線，在摩天大廈簇擁下享受攀岩。", en: "Around 109 routes nestled among skyscrapers." }, trans: { zh: "半山區", en: "Mid-Levels" }, gmap: "https://www.google.com/maps/search/?api=1&query=22.272,114.155" },
-            { id: 14, typeCode: 'AC', lat: 22.321, lng: 114.195, diff: "Top Rope/Lead", name: { zh: "JUST CLIMB (啟德)", en: "JUST CLIMB (Kai Tak)" }, desc: { zh: "全港唯一有蓋綜合攀石場。17.5米先鋒牆。", en: "HK's only covered complex. 17.5m lead wall." }, trans: { zh: "啟德體育大道", en: "Kai Tak Sports Avenue" }, gmap: "https://www.google.com/maps/search/?api=1&query=22.321,114.195" },
-            { id: 15, typeCode: 'AC', lat: 22.320, lng: 114.160, diff: "Top Rope", name: { zh: "大角咀體育館", en: "Tai Kok Tsui Sports Centre" }, desc: { zh: "共設10條路線(高9米)。需持二級運動攀登證書。", en: "10 routes (9m). Level 2 climbing cert required." }, trans: { zh: "大角咀福全街", en: "Fuk Tsun Street, Tai Kok Tsui" }, gmap: "https://www.google.com/maps/search/?api=1&query=22.320,114.160" }
-        ];
+        // ---------- 4. 攀岩點資料庫 (共用資料源 js/spots-data.js) ----------
+        const spots = SPOTS_DATA.spots;
 
         let map;
         let markers = {};
         let infoWindow;
         let currentFilter = 'all';      
         let currentSearchTerm = '';     
+        let currentGradeFilter = null;  
         const sidebar = document.getElementById('sidebar');
         const cardElements = {};         
+
+        // ---------- 難度篩選 (grade filter) ----------
+        window.filterGrade = function(grade, event) {
+            currentGradeFilter = grade;
+            document.querySelectorAll('.grade-btn').forEach(btn => btn.classList.remove('active'));
+            if (event && event.target && event.target.classList) event.target.classList.add('active');
+            applyFilters();
+        };
+
+        const gradeFiltersEl = document.querySelector('.grade-filters');
+        GRADES.V_GRADE_KEYS.forEach(key => {
+            const btn = document.createElement('button');
+            btn.className = 'grade-btn';
+            btn.textContent = key;
+            btn.addEventListener('click', (e) => filterGrade(key, e));
+            gradeFiltersEl.appendChild(btn);
+        });
 
         window.initMap = function() {
             map = new google.maps.Map(document.getElementById('map-inner'), {
@@ -227,13 +270,15 @@
         }
 
         function applyFilters() {
-            if (infoWindow) infoWindow.close(); 
+            if (infoWindow) infoWindow.close();
+            const matches = FILTER.filterSpots(spots, {
+                typeFilter: currentFilter,
+                gradeFilter: currentGradeFilter,
+                searchTerm: currentSearchTerm
+            });
+            const matchIds = new Set(matches.map(s => s.id));
             spots.forEach(spot => {
-                const matchCategory = (currentFilter === 'all' || spot.typeCode === currentFilter);
-                const searchData = `${spot.name.zh} ${spot.name.en} ${spot.diff} ${spot.desc.zh} ${spot.desc.en} ${spot.trans.zh} ${spot.trans.en}`.toLowerCase();
-                const matchSearch = searchData.includes(currentSearchTerm);
-                const isMatch = matchCategory && matchSearch;
-                
+                const isMatch = matchIds.has(spot.id);
                 if (markers[spot.id]) {
                     markers[spot.id].setMap(isMatch ? map : null);
                 }
