@@ -1,0 +1,25 @@
+name: CI
+
+# Zero-dependency project: no install step is needed.
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    name: Test and validate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: test
+        run: node --test tests/*.test.mjs
+
+      - name: validate spots data
+        run: node tools/validate-spots.mjs
