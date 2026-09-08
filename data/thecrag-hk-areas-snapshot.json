@@ -72,8 +72,9 @@
     { "name": "Lei Yue Mun Sports Centre", "url": "https://www.lcsd.gov.hk/clpss/tc/webApp/Facility/Details.do?fid=980" },
     { "name": "Kai Tak East Sports Centre", "url": "https://www.lcsd.gov.hk/clpss/tc/webApp/Facility/Details.do?fid=726" },
     { "name": "Tiu Keng Leng Sports Centre", "url": "https://www.lcsd.gov.hk/clpss/tc/webApp/Facility/Details.do?ftid=0&did=18" },
-    { "name": "GoNature Climbing Gym (Kwun Tong)", "url": "https://www.gonaturehk.com/zh/" },
+    { "name": "JUST CLIMB (Tseung Kwan O)", "url": "https://justclimb.hk/" },
     { "name": "HK Climbing Park (Yuen Long)", "url": "https://www.hkclimbingpark.com/" },
+    { "name": "JUST CLIMB (Tuen Mun)", "url": "https://justclimb.hk/visit-us/" },
     { "name": "Salong Crag", "url": "https://hongkongclimbing.com/routes/new-territories/salong-crag/" },
     { "name": "Black Kite Crag", "url": "https://www.thecrag.com/en/climbing/hong-kong/lantau-island/area/12484987" },
     { "name": "Temple Crag", "url": "https://www.mountainproject.com/area/110814095/temple-crag" },
@@ -81,6 +82,8 @@
     { "name": "Mount Nicholson (Black's Link)", "url": "https://www.ukclimbing.com/logbook/crags/mount_nicholson-21396/" },
     { "name": "Monkey Buttress (Braemar Hill)", "url": "https://27crags.com/crags/monkey-buttress-braemar-hill/description" },
     { "name": "Tathong Point", "url": "https://hongkongclimbing.com/routes/tung-lung-chau-2/tathong-point/" },
+    { "name": "Po Pin Chau", "url": "https://hongkongclimbing.com/routes/new-territories/po-ping-chau/" },
+    { "name": "Pok Fu Lam", "url": "https://hongkongclimbing.com/routes/hong-kong/pok-fu-lam/" },
     { "name": "Island East Sports Centre", "url": "https://www.lcsd.gov.hk/clpss/tc/webApp/Facility/Details.do?fid=1451" },
     { "name": "Tsuen Wan Sports Centre", "url": "https://www.lcsd.gov.hk/clpss/tc/webApp/Facility/Details.do?fid=2119" },
     { "name": "Tsing Yi Southwest Sports Centre", "url": "https://www.lcsd.gov.hk/clpss/tc/webApp/Facility/Details.do?fid=1450" },
@@ -90,8 +93,8 @@
     { "name": "Po Wing Road Sports Centre", "url": "https://www.lcsd.gov.hk/clpss/tc/webApp/Facility/Details.do?fid=1148" },
     { "name": "Tin Fai Road Sports Centre", "url": "https://www.lcsd.gov.hk/clpss/tc/webApp/Facility/Details.do?fid=1273" },
     { "name": "Siu Lun Sports Centre", "url": "https://www.lcsd.gov.hk/clpss/tc/webApp/Facility/Details.do?fid=2192" },
-    { "name": "Po Pin Chau", "url": "https://hongkongclimbing.com/routes/new-territories/po-ping-chau/" },
-    { "name": "Pok Fu Lam", "url": "https://hongkongclimbing.com/routes/hong-kong/pok-fu-lam/" },
-    { "name": "JUST CLIMB (Tuen Mun)", "url": "https://justclimb.hk/visit-us/" }
+    { "name": "Kizuna Climbing Gym (Tseung Kwan O)", "url": "https://www.freeguider.com/en/blogs/346/909" },
+    { "name": "BoulderMAD Climbing Gym (Kwun Tong)", "url": "https://panpa.hk/listing/bouldermad-climbing-gym/" },
+    { "name": "N Bouldering (Wan Chai)", "url": "https://www.corner.inc/place/pQQXzoCSsrXm" }
   ]
 }
