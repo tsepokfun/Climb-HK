@@ -100,25 +100,9 @@
   <div style="margin-top: 10px;" data-lang-key="footer_note">網站設計・僅供攀岩愛好者參考</div>
 </footer>
 
+<script src="js/spots-data.js"></script>
 <script>
-  // 簡化的攀岩點資料
-  const spots = [
-      { id: 1, typeCode: 'NB', lat: 22.213, lng: 114.200 },
-      { id: 2, typeCode: 'NB', lat: 22.228, lng: 114.251 },
-      { id: 3, typeCode: 'NB', lat: 22.245, lng: 114.290 },
-      { id: 4, typeCode: 'NB', lat: 22.200, lng: 114.130 },
-      { id: 5, typeCode: 'AB', lat: 22.335, lng: 114.198 },
-      { id: 6, typeCode: 'AB', lat: 22.292, lng: 114.207 },
-      { id: 7, typeCode: 'AB', lat: 22.385, lng: 114.195 },
-      { id: 8, typeCode: 'AB', lat: 22.328, lng: 114.163 },
-      { id: 9, typeCode: 'NC', lat: 22.230, lng: 114.250 },
-      { id: 10, typeCode: 'NC', lat: 22.247, lng: 114.288 },
-      { id: 11, typeCode: 'NC', lat: 22.345, lng: 114.165 },
-      { id: 12, typeCode: 'NC', lat: 22.352, lng: 114.185 },
-      { id: 13, typeCode: 'NC', lat: 22.272, lng: 114.155 },
-      { id: 14, typeCode: 'AC', lat: 22.321, lng: 114.195 },
-      { id: 15, typeCode: 'AC', lat: 22.320, lng: 114.160 }
-  ];
+  const spots = SPOTS_DATA.spots;
 
   function getCategoryColor(typeCode) {
       const colors = { 'NB': '#3a5a3a', 'AB': '#2d5a7b', 'NC': '#8a5a3a', 'AC': '#5a3a7b' };
