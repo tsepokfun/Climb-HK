@@ -4,6 +4,8 @@ name: CI
 on:
   push:
   pull_request:
+  schedule:
+    - cron: '0 1 * * 1'  # Weekly health check: Monday 01:00 UTC (09:00 HKT)
 
 jobs:
   test:
