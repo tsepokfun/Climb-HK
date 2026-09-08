@@ -91,12 +91,12 @@
 
 在 `js/spots-data.js` 的 `spots` 数组末尾追加一个对象(建议按现有注释分组,放进对应类型区段)。
 
-- `id` 取当前数组中最大 id +1(截至本文撰写时最大为 `33`),**不要复用已删除的 id**。
+- `id` 取当前数组中最大 id +1(截至本文撰写时最大为 `39`),**不要复用已删除的 id**。
 - 11 个字段全部填齐(见 1.2 字段表)。
 - 示例:
 
 ```js
-{ id: 34, typeCode: 'NB', lat: 22.300, lng: 114.220, diff: "V0 - V7", grades: { boulder: { min: "V0", max: "V7" } }, name: { zh: "示例抱石區", en: "Example Blocs" }, desc: { zh: "自撰中文描述。", en: "Original English description." }, trans: { zh: "交通方式", en: "Access" }, gmap: "https://www.google.com/maps/search/?api=1&query=22.300,114.220", source: "https://hongkongclimbing.com/…" }
+{ id: 40, typeCode: 'NB', lat: 22.300, lng: 114.220, diff: "V0 - V7", grades: { boulder: { min: "V0", max: "V7" } }, name: { zh: "示例抱石區", en: "Example Blocs" }, desc: { zh: "自撰中文描述。", en: "Original English description." }, trans: { zh: "交通方式", en: "Access" }, gmap: "https://www.google.com/maps/search/?api=1&query=22.300,114.220", source: "https://hongkongclimbing.com/…" }
 ```
 
 ### 步骤 2 — 双语文案自撰
@@ -141,7 +141,7 @@ npm run validate    # 即 node tools/validate-spots.mjs
 ```
 
 - `npm test`:现有测试对前 15 个点做逐字断言、对全量数据做「≥30 点 + id 唯一」断言;新增点不会破坏前 15 点的断言,但必须保证 id 唯一。
-- `npm run validate`:输出形如 `33 spots, 0 errors, 0 missing areas`,且退出码为 0;有任何 error 或 missing area 都要修完再继续。
+- `npm run validate`:输出形如 `39 spots, 0 errors, 0 missing areas`,且退出码为 0;有任何 error 或 missing area 都要修完再继续。
 
 ### 步骤 8 — 提交 PR / Issue
 
