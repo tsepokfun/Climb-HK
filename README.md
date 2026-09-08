@@ -96,7 +96,12 @@
 
 ## 🧗 資料維護
 
-網站的全部攀岩點資料集中在單一檔案 `js/spots-data.js`（目前 94 個點）。地圖頁與首頁都從這份檔案讀取，**不要在任何頁面內聯一份點資料**。
+網站的全部攀岩點資料集中在單一檔案 `js/spots-data.js`（目前 95 個點）。地圖頁與首頁都從這份檔案讀取，**不要在任何頁面內聯一份點資料**。
+
+- **資料帶地址**：室內館／公共攀石牆（AB/AC）有官方門牌地址，會在地圖卡片顯示；野外點（NB/NC）沒有地址。
+- **更新流程（一句話）**：改 `js/spots-data.js`（並同步 `data/thecrag-hk-areas-snapshot.json`）→ 本地跑 `npm test`、`node tools/validate-spots.mjs`、`node qa/run-all.mjs` 三連檢 → 提交 PR 合併，CI 再自動驗證，合入 main 後 GitHub Pages 自動上線。
+- **糾錯通道**：發現資料錯誤或缺漏，請開 GitHub Issue，或 fork 後提 Pull Request 修正。
+- **定期核對**：每半年（建議 1 月與 7 月）對照 theCrag 香港區與 hongkongclimbing.com 核對一次。
 
 新增或修改攀岩點的完整步驟（欄位表、難度格式規範、坐標取得方法、定期核對 theCrag 與 hongkongclimbing.com 的流程、PR/Issue 糾錯通道）請見：
 
@@ -109,11 +114,13 @@
 ```
 npm test            # 跑單元測試，等同 node --test tests/*.test.mjs
 npm run validate    # 資料校驗，等同 node tools/validate-spots.mjs
+node qa/run-all.mjs # QA 黑盒用例
 ```
 
 - `npm test`：跑 `tests/` 下的難度解析、篩選、資料結構與校驗規則測試（Windows 上不可用 `node --test tests/`，須用 glob 寫法，見 package.json）。
 - `npm run validate`：檢查每個點的欄位合法性（id 唯一、坐標範圍、類型碼、雙語非空、難度格式、min ≤ max）並對照快照；輸出 `0 errors, 0 missing areas` 即通過。
-- GitHub Actions CI（`.github/workflows/ci.yml`）在每次 push 與 pull request 自動跑以上兩條命令。
+- `node qa/run-all.mjs`：跑 `qa/` 下的黑盒用例（T-01／T-02／T-03）。
+- GitHub Actions CI（`.github/workflows/ci.yml`）在每次 push 與 pull request 自動跑以上三條命令，並**每週一 09:00 香港時間**（01:00 UTC）定時體檢（自動跑測試與資料校驗）。
 
 ## 📱 瀏覽器支援
 
