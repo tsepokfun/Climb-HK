@@ -118,6 +118,16 @@ test('every spot has the full required field set', () => {
     assert.ok('source' in s, 'source of spot ' + s.id);
     assert.ok('diff' in s, 'diff of spot ' + s.id);
     assert.ok('grades' in s, 'grades of spot ' + s.id);
+    assert.ok('address' in s, 'address of spot ' + s.id);
+    if (s.typeCode === 'AB' || s.typeCode === 'AC') {
+      assert.equal(typeof s.address, 'object', 'address object of spot ' + s.id);
+      assert.equal(typeof s.address.zh, 'string', 'address.zh of spot ' + s.id);
+      assert.equal(typeof s.address.en, 'string', 'address.en of spot ' + s.id);
+      assert.ok(s.address.zh.trim().length > 0, 'address.zh non-empty of spot ' + s.id);
+      assert.ok(s.address.en.trim().length > 0, 'address.en non-empty of spot ' + s.id);
+    } else {
+      assert.equal(s.address, null, 'address null of spot ' + s.id);
+    }
   }
 });
 

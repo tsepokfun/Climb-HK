@@ -59,6 +59,7 @@ export function validateSpot(spot) {
       }
     }
   }
+  validateAddress(spot, label, errors);
   validateGmap(spot, label, errors);
   if (!('diff' in spot)) {
     errors.push(`spot ${label}: diff field must exist`);
@@ -66,6 +67,28 @@ export function validateSpot(spot) {
   validateGrades(spot, label, errors);
   validateDiff(spot, label, errors);
   return errors;
+}
+
+// Validate the `address` field: AB/AC require {zh, en} with non-empty strings;
+// NB/NC require null.
+function validateAddress(spot, label, errors) {
+  const indoor = spot.typeCode === 'AB' || spot.typeCode === 'AC';
+  const outdoor = spot.typeCode === 'NB' || spot.typeCode === 'NC';
+  if (indoor) {
+    if (spot.address === null || spot.address === undefined || typeof spot.address !== 'object' || Array.isArray(spot.address)) {
+      errors.push(`spot ${label}: address must be {zh, en} for typeCode ${spot.typeCode}`);
+      return;
+    }
+    for (const lang of ['zh', 'en']) {
+      if (!isNonEmptyString(spot.address[lang])) {
+        errors.push(`spot ${label}: address.${lang} must be a non-empty string`);
+      }
+    }
+  } else if (outdoor) {
+    if (spot.address !== null) {
+      errors.push(`spot ${label}: address must be null for typeCode ${spot.typeCode}`);
+    }
+  }
 }
 
 // Validate the gmap field: correct prefix and query coords matching lat/lng.

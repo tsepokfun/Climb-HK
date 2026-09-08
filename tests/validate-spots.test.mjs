@@ -21,6 +21,7 @@ const goodSpot = {
   name: { zh: 'Test ZH', en: 'Test Spot' },
   desc: { zh: 'Description ZH', en: 'Description' },
   trans: { zh: 'Transport ZH', en: 'Transport' },
+  address: null,
   gmap: 'https://www.google.com/maps/search/?api=1&query=22.3,114.2',
   source: 'https://example.com'
 };
@@ -113,6 +114,36 @@ test('gmap query coords mismatching lat/lng is reported', () => {
   const errors = validateSpot(bad);
   assert.ok(errors.some((e) => e.includes('gmap query lat')), 'expected a gmap lat mismatch');
   assert.ok(errors.some((e) => e.includes('gmap query lng')), 'expected a gmap lng mismatch');
+});
+
+test('AB spot missing address is reported', () => {
+  const bad = { ...goodSpot, typeCode: 'AB', address: null };
+  assert.ok(validateSpot(bad).some((e) => e.includes('address must be {zh, en}')), 'expected an AB address error');
+});
+
+test('AB spot with empty address.zh is reported', () => {
+  const bad = { ...goodSpot, typeCode: 'AB', address: { zh: '', en: 'Test Address' } };
+  assert.ok(validateSpot(bad).some((e) => e.includes('address.zh')), 'expected an address.zh error');
+});
+
+test('AB spot with empty address.en is reported', () => {
+  const bad = { ...goodSpot, typeCode: 'AB', address: { zh: '地址', en: '  ' } };
+  assert.ok(validateSpot(bad).some((e) => e.includes('address.en')), 'expected an address.en error');
+});
+
+test('NB spot with non-null address is reported', () => {
+  const bad = { ...goodSpot, address: { zh: 'X', en: 'Y' } };
+  assert.ok(validateSpot(bad).some((e) => e.includes('address must be null')), 'expected an NB address-null error');
+});
+
+test('NC spot with non-null address is reported', () => {
+  const bad = { ...goodSpot, typeCode: 'NC', address: 'not-null' };
+  assert.ok(validateSpot(bad).some((e) => e.includes('address must be null')), 'expected an NC address-null error');
+});
+
+test('AC spot with valid address is accepted', () => {
+  const good = { ...goodSpot, typeCode: 'AC', address: { zh: '香港某地址', en: 'Some Address, Hong Kong' } };
+  assert.deepEqual(validateSpot(good), []);
 });
 
 test('isEntryPoint matches the file itself', () => {
