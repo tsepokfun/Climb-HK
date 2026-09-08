@@ -37,7 +37,7 @@
 - **文件**:`Map/map.html`
 - **工作**:删除内联 `spots` 数组,改为 `<script src="../js/spots-data.js"></script>` 与 `<script src="../js/filter.js"></script>`;筛选条新增「难度 V 级」行(全部/VB/V0–V14,单选,与类型筛选、搜索叠加);双语文案接入 `langDict`;标记与侧栏卡片联动保持现状。
 - **DoD(验收标准)**:
-  1. 打开 `Map/map.html`:15 个点显示与改造前一致(标记、卡片、弹窗、双语切换均正常)。
+  1. 打开 `Map/map.html`:全部点(数据源当前为 33 点)的标记、卡片、弹窗、双语切换显示正常,渲染逻辑与改造前一致(点数量随数据源增长,不回归)。
   2. 点击任一难度按钮(VB 或 V0–V14):地图标记与侧栏列表即时过滤,只显示难度区间包含该档的抱石点;攀登点在难度筛选激活时隐藏。
   3. 难度筛选与类型筛选、关键词搜索叠加(AND)生效。
   4. 「全部」按钮恢复显示所有点。
@@ -62,7 +62,7 @@
 - **Milestone**:M2
 - **Shape**:solo
 - **文件**:`js/spots-data.js`、`tests/spots-data.test.mjs`(点数/唯一性断言随全量数据同步更新)、`data/thecrag-hk-areas-snapshot.json`、`data/hk-areas-catalog-draft.md`(清单草稿,输入,无需修改)
-- **依赖**:与 T-01 共享 `js/spots-data.js`,必须串行(T-01 完成后开始)。
+- **依赖**:与 T-01 共享 `js/spots-data.js` 与 `tests/spots-data.test.mjs`,必须串行(T-01 完成后开始;点数/唯一性断言随数据规模同步更新)。
 - **工作**:以 theCrag 香港区为基准清单、hongkongclimbing.com 指南为复核,人工整理香港主要攀岩区域(含室内馆),全量写入 `js/spots-data.js`;生成 `data/thecrag-hk-areas-snapshot.json`(名称 + 来源 URL,事实性字段);每点补 `source` 字段;描述/交通文案自撰双语,不复制受版权文本。
 - **DoD(验收标准)**:
   1. 点数量 ≥ 30,且覆盖全部四类(NB/AB/NC/AC)。
@@ -124,12 +124,12 @@
 
 ---
 
-## Verdicts(评审结论,评审阶段填写)
+## Verdicts(评审结论,2026-09-08 填写)
 
-- T-01:`code: not run — 待评审`、`security: skipped — 不触碰风险面`、`qa: not run — 待 QA`、`doc: not run — 待文档评审`
-- T-02:`code: not run — 待评审`、`security: skipped — 不触碰风险面`、`qa: not run — 待 QA`、`doc: not run — 待文档评审`
-- T-03:`code: not run — 待评审`、`security: skipped — 不触碰风险面`、`qa: not run — 待 QA`、`doc: not run — 待文档评审`
-- T-04:`code: not run — 待评审`、`security: skipped — 不触碰风险面`、`qa: not run — 待 QA`、`doc: not run — 待文档评审`
-- T-05:`code: not run — 待评审`、`security: skipped — 不触碰风险面`、`qa: not run — 待 QA`、`doc: not run — 待文档评审`
-- T-06:`code: skipped — 无代码`、`security: skipped — 无代码`、`qa: not run — 待 QA`、`doc: not run — 待文档评审`
-- T-07:`code: not run — 待评审`、`security: skipped — 不触碰风险面`、`qa: not run — 待 QA`、`doc: not run — 待文档评审`
+- T-01:`code: pass`、`security: skipped — 不触碰风险面`、`qa: pass`、`doc: pass`
+- T-02:`code: pass`、`security: skipped — 不触碰风险面`、`qa: pass`、`doc: pass`
+- T-03:`code: pass`、`security: skipped — 不触碰风险面`、`qa: pass`、`doc: pass`
+- T-04:`code: pass`、`security: skipped — 不触碰风险面`、`qa: pass`、`doc: pass`
+- T-05:`code: pass`、`security: skipped — 不触碰风险面`、`qa: skipped — QA 用例未覆盖,校验单测 20 条全绿`、`doc: pass`
+- T-06:`code: skipped — 无代码`、`security: skipped — 无代码`、`qa: skipped — 文档任务,由文档评审覆盖`、`doc: pass`
+- T-07:`code: pass`、`security: skipped — 不触碰风险面`、`qa: skipped — 无 QA 用例,本地已实测相同命令`、`doc: pass`
