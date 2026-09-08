@@ -27,6 +27,7 @@
 | `name` | `{ zh, en }` | 必填 | 双语名称 | `{ zh: "舂坎角", en: "Chung Hom Kok" }` |
 | `desc` | `{ zh, en }` | 必填 | 双语描述(自撰) | `{ zh: "…", en: "…" }` |
 | `trans` | `{ zh, en }` | 必填 | 双语交通方式 | `{ zh: "…", en: "…" }` |
+| `address` | `{ zh, en }` 或 null | 必填 | AB/AC 填完整官方地址(双语非空);NB/NC 必须为 null | `{ zh: "香港九龍…", en: "…, Hong Kong" }` 或 `null` |
 | `gmap` | string | 必填 | Google Maps 链接(与 lat/lng 一致) | `"https://www.google.com/maps/search/?api=1&query=22.213,114.200"` |
 | `source` | string 或 null | 字段须存在(可为 null) | 数据来源 URL(追溯用);校验脚本不强制内容 | `"https://hongkongclimbing.com/…"` 或 `null` |
 
@@ -92,11 +93,11 @@
 在 `js/spots-data.js` 的 `spots` 数组末尾追加一个对象(建议按现有注释分组,放进对应类型区段)。
 
 - `id` 取当前数组中最大 id +1(截至本文撰写时最大为 `95`),**不要复用已删除的 id**。
-- 11 个字段全部填齐(见 1.2 字段表)。
+- 12 个字段全部填齐(见 1.2 字段表)。
 - 示例:
 
 ```js
-{ id: 96, typeCode: 'NB', lat: 22.300, lng: 114.220, diff: "V0 - V7", grades: { boulder: { min: "V0", max: "V7" } }, name: { zh: "示例抱石區", en: "Example Blocs" }, desc: { zh: "自撰中文描述。", en: "Original English description." }, trans: { zh: "交通方式", en: "Access" }, gmap: "https://www.google.com/maps/search/?api=1&query=22.300,114.220", source: "https://hongkongclimbing.com/…" }
+{ id: 96, typeCode: 'NB', lat: 22.300, lng: 114.220, diff: "V0 - V7", grades: { boulder: { min: "V0", max: "V7" } }, name: { zh: "示例抱石區", en: "Example Blocs" }, desc: { zh: "自撰中文描述。", en: "Original English description." }, trans: { zh: "交通方式", en: "Access" }, address: null, gmap: "https://www.google.com/maps/search/?api=1&query=22.300,114.220", source: "https://hongkongclimbing.com/…" }
 ```
 
 ### 步骤 2 — 双语文案自撰
@@ -109,6 +110,8 @@
 - 打开 Google Maps,搜索该区域;在目标位置**右键 → 复制坐标**(或点按落点查看坐标)。
 - 区域级精度即可:**3 位小数**(约 ±100 米),与现有数据一致。
 - 注意顺序:Google Maps 复制的是「纬度, 经度」,前一个填 `lat`、后一个填 `lng`,不要颠倒。
+- **AB/AC(室内馆/公共攀石墙)**:先到官方渠道(官网、康文署 LCSD 页面等)核实**完整官方地址**,填入 `address` 的 `{ zh, en }`。
+- 再用 Nominatim(https://nominatim.openstreetmap.org/)按该地址搜索,把返回坐标编码到对应建筑物,以此校准 `lat`/`lng`,把标记钉到正确大楼上。
 
 ### 步骤 4 — 生成 `gmap` 链接
 
@@ -195,6 +198,7 @@ npm run validate    # 即 node tools/validate-spots.mjs
 | lng | 数字,范围 [113.8, 114.5] |
 | typeCode | 仅限 `NB` / `AB` / `NC` / `AC` |
 | name / desc / trans | `zh` 与 `en` 均须为非空字符串 |
+| address | AB/AC 须为 `{ zh, en }`(双语非空);NB/NC 必须为 null |
 | gmap | 必须是字符串 |
 | diff | 字段必须存在 |
 | grades | `null`、`{ boulder: {min,max} }` 或 `{ rope: {min,max} }`;min/max 可被难度解析器解析,且 min ≤ max |
