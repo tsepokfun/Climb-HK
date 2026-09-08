@@ -23,3 +23,6 @@ jobs:
 
       - name: validate spots data
         run: node tools/validate-spots.mjs
+
+      - name: qa cases
+        run: node qa/run-all.mjs

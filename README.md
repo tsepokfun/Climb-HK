@@ -8,6 +8,10 @@
 ├── index.html          # 首頁（主頁面）
 ├── style.css           # 全站樣式
 ├── package.json        # 零依賴 Node 工具鏈（test / validate 指令）
+├── CHANGELOG.md        # 更新日誌
+├── .github/
+│   └── workflows/
+│       └── ci.yml      # GitHub Actions CI（push / PR 跑測試與校驗）
 ├── Map/                # 攀岩地圖頁面
 │   └── map.html        # 地圖頁（含難度／類型／關鍵字篩選）
 ├── Path/               # 入門分類頁面
@@ -30,7 +34,19 @@
 ├── tests/              # 單元測試（node --test）
 ├── tools/              # 資料校驗腳本
 │   └── validate-spots.mjs
+├── qa/                 # QA 黑盒用例（node qa/run-all.mjs）
+│   ├── run-all.mjs     # QA 總跑器
+│   ├── gaps.md         # 無法在此測試的缺口清單
+│   ├── T-01/           # 單一資料源 + 難度解析 用例
+│   ├── T-02/           # 地圖難度篩選 用例
+│   └── T-03/           # 首頁接線 用例
 └── docs/               # 設計、任務表與維護文件
+    ├── design/         # PRD 等設計文件
+    │   └── prd-2026-09-08-map-grade-filter-hk-spots.md
+    ├── tasks/          # 任務表
+    │   └── tasks.md
+    ├── decisions/      # 決策記錄（CRD）
+    │   └── crd/0001-m2-m3-validator-placement.md
     └── spots-data-guide.md  # 資料維護指南（中文）
 ```
 
@@ -47,7 +63,7 @@
 - 互動式地圖，標記香港主要攀岩場地
 - 可按類型篩選：天然抱石、人工抱石、天然攀登、人工攀登
 - 可按難度篩選：VB、V0–V14（抱石點；攀登點在難度篩選啟動時隱藏）
-- 支援關鍵字搜尋（地點、難度、簡介）
+- 支援關鍵字搜尋（名稱、難度、簡介、交通）
 - 點擊地圖標記或側邊欄卡片顯示詳細資訊
 
 ### 3. 入門分類頁面 (Path/AB, AC, NB, NC.html)

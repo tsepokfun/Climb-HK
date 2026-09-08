@@ -5,7 +5,7 @@
  * running this file directly validates the real data and the snapshot.
  */
 import { readFileSync } from 'node:fs';
-import { dirname, join } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import spotsData from '../js/spots-data.js';
 import grades from '../js/grades.js';
@@ -15,6 +15,8 @@ const LAT_MIN = 22.1;
 const LAT_MAX = 22.6;
 const LNG_MIN = 113.8;
 const LNG_MAX = 114.5;
+const GMAP_PREFIX = 'https://www.google.com/maps/search/?api=1&query=';
+const COORD_TOLERANCE = 0.0005;
 
 // True when `value` is a non-empty string (after trimming).
 function isNonEmptyString(value) {
@@ -57,14 +59,44 @@ export function validateSpot(spot) {
       }
     }
   }
-  if (typeof spot.gmap !== 'string') {
-    errors.push(`spot ${label}: gmap must be a string`);
-  }
+  validateGmap(spot, label, errors);
   if (!('diff' in spot)) {
     errors.push(`spot ${label}: diff field must exist`);
   }
   validateGrades(spot, label, errors);
+  validateDiff(spot, label, errors);
   return errors;
+}
+
+// Validate the gmap field: correct prefix and query coords matching lat/lng.
+function validateGmap(spot, label, errors) {
+  const gmap = spot.gmap;
+  if (typeof gmap !== 'string') {
+    errors.push(`spot ${label}: gmap must be a string`);
+    return;
+  }
+  if (!gmap.startsWith(GMAP_PREFIX)) {
+    errors.push(`spot ${label}: gmap must start with ${GMAP_PREFIX}`);
+    return;
+  }
+  const coord = gmap.slice(GMAP_PREFIX.length);
+  const parts = coord.split(',');
+  if (parts.length !== 2) {
+    errors.push(`spot ${label}: gmap query must be "lat,lng"`);
+    return;
+  }
+  const qLat = parseFloat(parts[0]);
+  const qLng = parseFloat(parts[1]);
+  if (Number.isNaN(qLat) || Number.isNaN(qLng)) {
+    errors.push(`spot ${label}: gmap query lat,lng must be numeric`);
+    return;
+  }
+  if (Math.abs(qLat - spot.lat) > COORD_TOLERANCE) {
+    errors.push(`spot ${label}: gmap query lat ${qLat} does not match spot lat ${spot.lat}`);
+  }
+  if (Math.abs(qLng - spot.lng) > COORD_TOLERANCE) {
+    errors.push(`spot ${label}: gmap query lng ${qLng} does not match spot lng ${spot.lng}`);
+  }
 }
 
 // Validate the `grades` field: null | {boulder:{min,max}} | {rope:{min,max}},
@@ -90,6 +122,18 @@ function validateGrades(spot, label, errors) {
   }
 }
 
+// Validate diff consistency: for structured (non-null) grades, `diff` must
+// equal the display string generated from grades (min - max). Skipped when
+// grades is null.
+function validateDiff(spot, label, errors) {
+  if (spot.grades === null || spot.grades === undefined) return;
+  const expected = spotsData.formatGrade(spot.grades);
+  if (expected === null || expected === undefined) return;
+  if (spot.diff !== expected) {
+    errors.push(`spot ${label}: diff must equal formatGrade(grades): expected ${JSON.stringify(expected)}, got ${JSON.stringify(spot.diff)}`);
+  }
+}
+
 // Validate the whole spot list, including id uniqueness / duplicates.
 // Returns an array of error strings.
 export function validateSpots(spots) {
@@ -109,39 +153,68 @@ export function validateSpots(spots) {
   return errors;
 }
 
-// Compare snapshot areas against the spot.name.en values.
-// Returns an array of missing-area strings.
+// Compare snapshot areas against spot.name.en values and their source URLs.
+// For each snapshot entry whose url is non-null, the matching spot's `source`
+// must equal it exactly (a null url skips the check). Also reports spots that
+// are in the data but absent from the snapshot (reverse). Returns an array of
+// error strings; empty means consistent.
 export function compareSnapshot(spots, snapshot) {
-  const names = new Set();
+  const byName = new Map();
   for (const spot of spots || []) {
     const en = spot && spot.name && spot.name.en;
-    if (typeof en === 'string') names.add(en);
-  }
-  const missing = [];
-  for (const area of (snapshot && snapshot.areas) || []) {
-    if (!names.has(area.name)) {
-      missing.push(`missing area: ${area.name}`);
+    if (typeof en === 'string' && !byName.has(en)) {
+      byName.set(en, spot);
     }
   }
-  return missing;
+  const snapshotNames = new Set();
+  for (const area of (snapshot && snapshot.areas) || []) {
+    if (area && typeof area.name === 'string') snapshotNames.add(area.name);
+  }
+  const issues = [];
+  for (const area of (snapshot && snapshot.areas) || []) {
+    if (!byName.has(area.name)) {
+      issues.push(`missing area: ${area.name}`);
+      continue;
+    }
+    if (area.url === null || area.url === undefined) {
+      continue;
+    }
+    const spot = byName.get(area.name);
+    if (spot.source !== area.url) {
+      issues.push(`url mismatch for ${area.name}: snapshot ${JSON.stringify(area.url)} != source ${JSON.stringify(spot.source)}`);
+    }
+  }
+  for (const spot of spots || []) {
+    const en = spot && spot.name && spot.name.en;
+    if (typeof en === 'string' && !snapshotNames.has(en)) {
+      issues.push(`spot ${idLabel(spot)}: "${en}" is in spots data but missing from snapshot`);
+    }
+  }
+  return issues;
+}
+
+// True when `argv1` (process.argv[1]) resolves to the same file as the given
+// import.meta.url. path.resolve normalizes a relative path so the entry check
+// also works when the script is invoked from another directory.
+export function isEntryPoint(importMetaUrl, argv1) {
+  if (!argv1) return false;
+  return importMetaUrl === pathToFileURL(resolve(argv1)).href;
 }
 
 // --- main (only when run directly, not when imported by a test) ---
-const isMain = process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href;
-
-if (isMain) {
+if (isEntryPoint(import.meta.url, process.argv[1])) {
   const here = dirname(fileURLToPath(import.meta.url));
   const snapshotPath = join(here, '..', 'data', 'thecrag-hk-areas-snapshot.json');
   const snapshot = JSON.parse(readFileSync(snapshotPath, 'utf8'));
 
   const spots = spotsData.spots;
   const errors = validateSpots(spots);
-  const missing = compareSnapshot(spots, snapshot);
+  const snapshotIssues = compareSnapshot(spots, snapshot);
 
-  for (const message of [...errors, ...missing]) {
+  for (const message of [...errors, ...snapshotIssues]) {
     console.error(message);
   }
-  console.log(`${spots.length} spots, ${errors.length} errors, ${missing.length} missing areas`);
+  console.log(`${spots.length} spots, ${errors.length} errors, ${snapshotIssues.length} missing areas`);
 
-  process.exitCode = errors.length === 0 && missing.length === 0 ? 0 : 1;
+  process.exitCode = errors.length === 0 && snapshotIssues.length === 0 ? 0 : 1;
 }
