@@ -5,7 +5,7 @@
 ### 新增
 
 - 地图页新增「难度 V 级」筛选:全部 / VB / V0–V14,单选;与类型筛选、关键词搜索叠加;攀登点(法国级)在难度筛选激活时隐藏。
-- 攀岩点数据从 15 个扩展到 70 个,覆盖天然抱石、天然攀登、室内抱石、室内攀登四类;以 theCrag 香港区与 hongkongclimbing.com 为基准人工整理。
+- 攀岩点数据从 15 个扩展到 94 个,覆盖天然抱石、天然攀登、室内抱石、室内攀登四类;以 theCrag 香港区与 hongkongclimbing.com 为基准人工整理。
 - 单一数据源 js/spots-data.js:地图页与首页共用同一份数据,不再重复维护。
 - 数据校验脚本 tools/validate-spots.mjs(npm run validate):字段完整性、坐标范围、难度格式、快照对照零缺失。
 - 单元测试 51 条(npm test)与 QA 用例 25 条(node qa/run-all.mjs)。
